@@ -1,0 +1,320 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:cache="http://www.springframework.org/schema/cache" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc
+	 http://www.springframework.org/schema/mvc/spring-mvc-4.2.xsd
+	http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context-4.2.xsd
+	http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache-4.2.xsd
+	 ">
+	<!-- 注解探测器 -->
+	<context:component-scan base-package="com.nieyue" >
+	<!--  将service排除在外，意味着这个时候不初始化service    -->  
+    <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Service"/>  
+	</context:component-scan>
+	 <mvc:annotation-driven conversion-service="myConverter" validator="myValidator" content-negotiation-manager="responseContentNegotiationManager" >
+	 <mvc:message-converters>
+	 	<bean class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+		<property name="supportedMediaTypes">
+			<list>
+				<value>text/plain;charset=utf-8</value>
+				<value>text/html;charset=utf-8</value>
+				<value>application/json;charset=utf-8</value>
+			</list>
+		</property>
+		<property name="objectMapper">
+			<bean class="com.fasterxml.jackson.databind.ObjectMapper">
+				<property name="propertyNamingStrategy">
+					<bean
+						class="com.fasterxml.jackson.databind.PropertyNamingStrategy.SnakeCaseStrategy"></bean>
+				</property>
+				<property name="dateFormat">
+				<bean class="java.text.SimpleDateFormat">
+					<constructor-arg type="java.lang.String" value="yyyy-MM-dd HH:mm:ss"/>
+				</bean>
+				</property>
+			</bean>
+		</property>
+	</bean>
+	
+	<bean class="org.springframework.http.converter.xml.MappingJackson2XmlHttpMessageConverter" >
+		<property name="supportedMediaTypes">
+			<list>
+				<value>text/plain;charset=utf-8</value>
+				<value>text/html;charset=utf-8</value>
+				<value>application/xml;charset=utf-8</value>
+			</list>
+		</property>
+		<property name="objectMapper">
+		 <bean class="com.fasterxml.jackson.dataformat.xml.XmlMapper">
+				<property name="propertyNamingStrategy">
+					<bean
+						class="com.fasterxml.jackson.databind.PropertyNamingStrategy.SnakeCaseStrategy" >
+					</bean>
+				</property>
+				<property name="dateFormat">
+				<bean class="java.text.SimpleDateFormat">
+					<constructor-arg type="java.lang.String" value="yyyy-MM-dd HH:mm:ss"/>
+				</bean>
+				</property>
+			</bean> 
+		</property>
+	</bean>
+	 </mvc:message-converters>
+	 </mvc:annotation-driven>
+    <!-- @responsebody 下 '/'、'.josn'匹配json,'.xml'匹配xml  -->
+		<bean id="myDateFormatter" class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
+					<property name="formatters">
+						<bean class="com.nieyue.comments.MyDateFormatter">
+						</bean>
+				</property>
+		</bean>
+		<bean id="myConverter" class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
+					<property name="converters">
+						<bean class="com.nieyue.comments.MyArgConverter">
+						</bean>
+					</property>
+		</bean>
+		<bean id="myValidator"
+		class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
+		<property name="providerClass" value="org.hibernate.validator.HibernateValidator" />
+		<!-- 不设置则默认为classpath下的 ValidationMessages.properties -->
+		<property name="validationMessageSource" ref="validatemessageSource" />
+	</bean>
+	<bean id="validatemessageSource"
+		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<property name="useCodeAsDefaultMessage" value="false" />
+		<property name="defaultEncoding" value="utf-8" />
+		<property name="cacheSeconds" value="60" />
+		<property name="basenames">
+			<list>
+				<value>classpath:config/validateMessages</value>
+				<value>classpath:org/hibernate/validator/validationMessages</value>
+			</list>
+		</property>
+	</bean>
+    <bean id="responseContentNegotiationManager" class="org.springframework.web.accept.ContentNegotiationManagerFactoryBean"
+          p:defaultContentType="application/json;charset=UTF-8"  
+          p:ignoreAcceptHeader="true"  
+          p:favorPathExtension="true"  
+          p:favorParameter="false"  
+          p:parameterName="content"
+          >
+		<property name="mediaTypes">
+			<map>
+				<entry key="wx" value="text/x-asm;charset=UTF-8" />
+				<entry key="html" value="text/plain;charset=UTF-8" />
+				<entry key="json" value="application/json" />
+         		<entry key="xml" value="application/xml" /> 
+				<entry key="xls" value="application/vnd.ms-excel" /> 
+         		<entry key="pdf" value="application/pdf"  />   
+			</map>
+		</property>
+	</bean>
+	<!-- <mvc:annotation-driven validator="validator"
+		conversion-service="conversion-service" />
+	<bean id="validator"
+		class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
+		<property name="providerClass" value="org.hibernate.validator.HibernateValidator" />
+		不设置则默认为classpath下的 ValidationMessages.properties
+		<property name="validationMessageSource" ref="validatemessageSource" />
+	</bean>
+	<bean id="conversion-service"
+		class="org.springframework.format.support.FormattingConversionServiceFactoryBean" />
+	<bean id="validatemessageSource"
+		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<property name="fileEncodings" value="utf-8" />
+		<property name="cacheSeconds" value="120" />
+		<property name="basenames">
+			<list>
+				<value>/WEB-INF/config/validatemessages</value>
+			</list>
+		</property>
+	</bean> -->
+	
+	    <!--< bean class="org.springframework.http.converter.StringHttpMessageConverter">  
+        <constructor-arg value="UTF-8" index="0">  
+        </constructor-arg>  
+        <property name="supportedMediaTypes">  
+            <list>  
+                <value>text/plain;charset=UTF-8</value>  
+            </list>  
+        </property>  
+    </bean>    -->
+     <!--非@responsebody下的 配置ViewResolver。 可以用多个ViewResolver。 使用order属性排序。 InternalResourceViewResolver放在最后。 -->
+	<bean id="contentNegotiationManager" class="org.springframework.web.accept.ContentNegotiationManagerFactoryBean"
+          p:defaultContentType="text/html;charset=UTF-8"  
+          p:ignoreAcceptHeader="true"  
+          p:favorPathExtension="true"  
+          p:favorParameter="false"  
+          p:parameterName="content"
+          >
+		<property name="mediaTypes">
+			<map>
+				<entry key="json" value="application/json" />
+         		<entry key="xml" value="application/xml;charset=UTF-8" /> 
+				<entry key="xls" value="application/vnd.ms-excel" /> 
+         		<entry key="pdf" value="application/pdf"  />   
+			</map>
+		</property>
+	</bean>  
+	 <bean id="myModelAndView"
+		class="org.springframework.web.servlet.view.ContentNegotiatingViewResolver" >
+		 <property name="viewResolvers">
+			<list>
+			<bean class="org.springframework.web.servlet.view.freemarker.FreeMarkerViewResolver">  
+                    <property name="viewClass" value="org.springframework.web.servlet.view.freemarker.FreeMarkerView"/>  
+                    <property name="viewNames" value=".ftl"/>  
+                    <property name="contentType" value="text/html; charset=utf-8"/>  
+                    <property name="cache" value="true" />  
+                    <property name="prefix" value="/" />  
+                    <property name="suffix" value=".html" />  
+                    <property name="order" value="5"/>  
+                </bean> 
+				<bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+					<property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
+					<property name="prefix" value="/WEB-INF/jsp/"/>
+					<property name="suffix" value=".jsp"/>
+        			<property name="order" value="1"/>
+         		</bean>
+			</list>
+		</property> 
+		<property name="order" value="2" />
+		<property name="contentNegotiationManager" ref="contentNegotiationManager" />
+		<property name="defaultViews">
+			<list>
+	<bean 
+		class="org.springframework.web.servlet.view.json.MappingJackson2JsonView">
+		<property name="objectMapper">
+			<bean class="com.fasterxml.jackson.databind.ObjectMapper">
+				
+		<property name="dateFormat">
+				<bean class="java.text.SimpleDateFormat">
+					<constructor-arg type="java.lang.String" value="yyyy-MM-dd HH:mm:ss"/>
+				</bean>
+		</property>
+			</bean>
+		</property>
+	</bean>
+	<bean class="org.springframework.web.servlet.view.xml.MappingJackson2XmlView">
+		<property name="objectMapper">
+			<bean class="com.fasterxml.jackson.dataformat.xml.XmlMapper">
+				<property name="propertyNamingStrategy">
+					<bean
+						class="com.fasterxml.jackson.databind.PropertyNamingStrategy.SnakeCaseStrategy">
+						</bean>
+				</property>
+				<property name="dateFormat">
+				<bean class="java.text.SimpleDateFormat">
+					<constructor-arg type="java.lang.String" value="yyyy-MM-dd HH:mm:ss"/>
+				</bean>
+				</property>
+			</bean>
+		</property>
+	</bean>  
+    
+	 <!-- <bean  class="org.springframework.web.servlet.view.xml.MarshallingView">
+    <property name="marshaller">
+        <bean class="org.springframework.oxm.xstream.XStreamMarshaller">
+            <property name="aliases">
+                <map>
+                    <entry key="xml" value="com.nieyue.bean.User"/>
+                </map>
+            </property>
+            <property name="fieldAliases">
+                <map>
+                    <entry key="com.nieyue.bean.User.userId" value="userid"/>
+                </map>
+            </property>
+           </bean>  
+    </property>
+</bean>  -->
+ 		</list>
+		</property>
+	</bean> 
+    <mvc:default-servlet-handler/> 
+    
+	<!-- <mvc:resources location="/resources/css/,/WEB-INF/resources/css/"
+		mapping="/resources/css/**" />
+	<mvc:resources location="/resources/img/,/WEB-INF/resources/img/"
+		mapping="/resources/img/**" />
+	<mvc:resources location="/resources/js/,/WEB-INF/resources/js/"
+		mapping="/resources/js/**" />
+	<mvc:resources location="/resources/fonts/,/WEB-INF/resources/fonts/"
+		mapping="/resources/fonts/**" /> 
+	<mvc:resources location="/resources/userUpload/,/WEB-INF/resources/userUpload/"
+		mapping="/resources/userUpload/**" /> 
+	<mvc:resources location="/resources/sellerUpload/,/WEB-INF/resources/sellerUpload/"
+		mapping="/resources/sellerUpload/**" /> 
+	<mvc:resources location="/resources/adminUpload/,/WEB-INF/resources/adminUpload/"
+		mapping="/resources/adminUpload/**" />  -->
+ 	<!-- <mvc:resources location="/" mapping="/**" />  -->
+	<!-- <mvc:resources location="/,classpath:/META-INF/publicResources/" mapping="/resources/**"/> -->
+	<!-- 文件上传 -->
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">  
+        <property name="defaultEncoding" value="utf-8"></property>   
+        <property name="maxUploadSize" value="10485760000"></property>  
+        <!-- <property name="maxInMemorySize" value="1024"></property>  
+ -->   </bean>  
+   
+	<!--定义异常处理页面 -->
+ <bean id="exceptionResolver"
+		class="com.nieyue.exception.MySimpleMappingExceptionResolver">
+		<property name="order" value="0"></property>
+		<property name="exceptionMappings">
+			<props>
+				<prop key="com.nieyue.exception.MySellerSessionException">/exception/sellerSession</prop>
+				<prop key="org.springframework.web.HttpRequestMethodNotSupportedException">/exception/fail</prop>
+				<prop key="org.springframework.web.method.annotation.MethodArgumentTypeMismatchException">/exception/fail</prop>
+				<prop key="org.springframework.dao.DataIntegrityViolationException">/exception/fail</prop>
+				<prop key="org.springframework.web.method.annotation.MethodArgumentTypeMismatchException">/exception/fail</prop>
+				<prop key="org.springframework.web.HttpSessionRequiredException">/exception/fail</prop>
+				<prop key="java.sql.SQLException">/exception/fail</prop>
+				<prop key="java.io.IOException">/exception/fail</prop>
+				<prop key="java.lang.RuntimeException">/exception/fail</prop>
+				<prop key="java.lang.Exception">/exception/fail</prop>
+			</props>
+		</property>
+		 <property name="defaultErrorView" value="/exception/fail" /> 
+	</bean>
+	<!-- <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter"> 
+		<property name="messageConverters"> <list> <ref bean="mappingJackson2HttpMessageConverter" 
+		/> </list> </property> </bean> -->
+	<!-- 下划线转驼峰 -->
+	<!-- <mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/**"/>
+			<bean class="com.nieyue.interceptor.HttpParameterInterceptor"></bean>
+		</mvc:interceptor>
+	</mvc:interceptors> -->
+	<!-- 拦截权限 -->
+	  <mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/**"></mvc:mapping>
+			<mvc:exclude-mapping path="/exception/**"/>
+			<bean class="com.nieyue.interceptor.AdminControllerSessionInterceptor"></bean>
+		</mvc:interceptor>
+	</mvc:interceptors>  
+	
+	<!-- 拦截器配置 -->
+	<!-- <mvc:interceptors > 配置Shiro拦截器，实现注册用户的注入 <mvc:interceptor > <mvc:mapping 
+		path = "/**" /> <bean class = "com.storezhang.video.shiro.ShiroInterceptor" 
+		/> </mvc:interceptor > 配置Token拦截器，防止用户重复提交数据 <mvc:interceptor > <mvc:mapping 
+		path = "/**" /> <bean class = "com.yayao.interceptor.TokenHandlerInterceptor" 
+		/> </mvc:interceptor > <bean class = "com.yayao.interceptor.TokenHandlerInterceptor" 
+		/> </mvc:interceptors > -->
+		
+	<!--ehcache缓存 不能放在applicationContext.xml中 -->
+<!-- 		 <cache:annotation-driven cache-manager ="ehcacheCacheManager" />  
+       <bean id = "ehcacheCacheManager" class= "org.springframework.cache.ehcache.EhCacheCacheManager"  
+           p:cacheManager-ref= "ehcacheManager" />    
+  		<bean id="ehcacheManager" class="org.springframework.cache.ehcache.EhCacheManagerFactoryBean"
+  		 p:config-location="classpath:config/ehcache.xml" p:shared="true"/>
+ -->
+	
+ 	
+</beans>

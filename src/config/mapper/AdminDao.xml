@@ -1,0 +1,253 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+<mapper namespace="com.nieyue.dao.AdminDao">
+<!-- 添加管理员 -->
+<insert id="addAdmin" parameterType="Admin" keyProperty="adminId" flushCache="true"  >  
+   INSERT IGNORE INTO
+   		  admin_tb 
+   		 (name,
+   		 cell_phone,
+   		 email,
+   		 password,
+   		 money,
+   		 withdrawals,
+   		 recharge,
+   		 identity_cards,
+   		 qq,
+   		 wechat,
+   		 bank_user_name,
+   		 bank_name,
+   		 bank_account,
+   		 bank_address,
+   		 status,
+   		 create_date,
+   		 last_login_date,
+   		 role_id)
+   VALUES
+    	 (#{name},
+    	 #{cellPhone},
+    	 #{email},
+    	 #{password},
+    	 #{money},
+    	 #{withdrawals},
+    	 #{recharge},
+    	 #{identityCards},
+    	 #{qq},
+    	 #{wechat},
+    	 #{bankUserName},
+    	 #{bankName},
+    	 #{bankAccount},
+    	 #{bankAddress},
+    	 #{status},
+    	 #{createDate},
+    	 #{lastLoginDate},
+    	 #{roleId})  
+</insert>  
+<!-- 更新管理员 -->
+<update id="updateAdmin" parameterType="Admin" >  
+    UPDATE 
+    	admin_tb 
+    SET 
+    	name=#{name},
+    	cell_phone=#{cellPhone},
+    	email=#{email},
+    	password=#{password},
+    	money=#{money},
+    	withdrawals=#{withdrawals},
+    	recharge=#{recharge},
+    	identity_cards=#{identityCards},
+    	qq=#{qq},
+    	wechat=#{wechat},
+    	bank_user_name=#{bankUserName},
+    	bank_name=#{bankName},
+    	bank_account=#{bankAccount},
+    	bank_address=#{bankAddress},
+    	status=#{status},
+    	create_date=#{createDate},
+    	last_login_date=#{lastLoginDate},
+    	role_id=#{roleId}
+    WHERE
+    	 admin_id=#{adminId} 
+</update> 
+<!-- 删除管理员-->
+<delete id="delAdmin"  parameterType="Integer" >  
+    DELETE FROM
+    	 admin_tb 
+    	 WHERE admin_id=#{adminId}
+</delete>  
+<!-- 加载管理员-->
+<select id="loadAdmin" parameterType="Integer" resultType="Admin" >
+SELECT 
+		 admin_id,
+	 	 name,
+   		 cell_phone,
+   		 email,
+   		 password,
+   		 money,
+   		 withdrawals,
+   		 recharge,
+   		 identity_cards,
+   		 qq,
+   		 wechat,
+   		 bank_user_name,
+   		 bank_name,
+   		 bank_account,
+   		 bank_address,
+   		 status,
+   		 create_date,
+   		 last_login_date,
+   		 role_id
+FROM admin_tb 
+WHERE admin_id=#{adminId}
+</select>
+<!-- 管理员登录-->
+<select id="loginAdmin" parameterType="String" resultType="Admin" >
+SELECT 
+		 admin_id,
+	 	 name,
+   		 cell_phone,
+   		 email,
+   		 password,
+   		 money,
+   		 withdrawals,
+   		 recharge,
+   		 identity_cards,
+   		 qq,
+   		 wechat,
+   		 bank_user_name,
+   		 bank_name,
+   		 bank_account,
+   		 bank_address,
+   		 status,
+   		 create_date,
+   		 last_login_date,
+   		 role_id
+FROM admin_tb 
+WHERE 
+(cell_phone=#{adminName}  OR email=#{adminName}) 
+AND password=#{password}
+</select>
+
+<!--修改金钱-->
+<update id="moneyAdmin" parameterType="Admin" >  
+    UPDATE 
+    	admin_tb 
+    SET 
+    	money=#{money}
+    WHERE
+    	 admin_id=#{adminId} 
+</update> 
+<!--所有登录手机号-->
+<select id="browseAllAdminPhone" resultType="String">  
+    SELECT
+   		 cell_phone
+	FROM admin_tb
+</select> 
+<!-- 所有登录email-->
+<select id="browseAllAdminEmail" resultType="String">  
+   SELECT
+   		 email
+	FROM admin_tb
+</select> 
+<!-- 分页查询管理员-->
+<select id="browsePagingAdmin" resultType="Admin">  
+    SELECT
+	     admin_id,
+	 	 name,
+   		 cell_phone,
+   		 email,
+   		 password,
+   		 money,
+   		 withdrawals,
+   		 recharge,
+   		 identity_cards,
+   		 qq,
+   		 wechat,
+   		 bank_user_name,
+   		 bank_name,
+   		 bank_account,
+   		 bank_address,
+   		 status,
+   		 create_date,
+   		 last_login_date,
+   		 role_id
+	FROM admin_tb
+	ORDER BY
+		${orderName}  ${orderWay}
+	LIMIT
+		#{pageNum},#{pageSize}
+</select> 
+<!-- 根据角色分页查询管理员-->
+<select id="browsePagingAdminByRoleId" resultType="Admin">  
+    SELECT
+	     admin_id,
+	 	 name,
+   		 cell_phone,
+   		 email,
+   		 password,
+   		 money,
+   		 withdrawals,
+   		 recharge,
+   		 identity_cards,
+   		 qq,
+   		 wechat,
+   		 bank_user_name,
+   		 bank_name,
+   		 bank_account,
+   		 bank_address,
+   		 status,
+   		 create_date,
+   		 last_login_date,
+   		 role_id
+	FROM admin_tb
+	WHERE role_id=#{roleId}
+	ORDER BY
+		${orderName}  ${orderWay}
+	LIMIT
+		#{pageNum},#{pageSize}
+</select> 
+<!-- 查询全部管理员-->
+<select id="browseAllAdmin" resultType="Admin">  
+    SELECT
+	     admin_id,
+	 	 name,
+   		 cell_phone,
+   		 email,
+   		 password,
+   		 money,
+   		 withdrawals,
+   		 recharge,
+   		 identity_cards,
+   		 qq,
+   		 wechat,
+   		 bank_user_name,
+   		 bank_name,
+   		 bank_account,
+   		 bank_address,
+   		 status,
+   		 create_date,
+   		 last_login_date,
+   		 role_id
+	FROM admin_tb
+	ORDER BY
+		${orderName}  ${orderWay}
+</select> 
+
+<!-- 统计记录条数 -->
+<select id="countAll"  resultType="int">  
+	SELECT
+	 	count(admin_id)
+	FROM admin_tb
+</select>   
+<!-- 根据角色统计记录条数 -->
+<select id="countAllByRoleId"  resultType="int">  
+	SELECT
+	 	count(admin_id)
+	FROM admin_tb
+	WHERE role_id=#{roleId}
+</select>   
+   
+ 
+</mapper>

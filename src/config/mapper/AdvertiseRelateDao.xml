@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+<mapper namespace="com.nieyue.dao.AdvertiseRelateDao">
+<!-- 添加广告位广告关系 -->
+<insert id="addAdvertiseRelate" parameterType="AdvertiseRelate" keyProperty="advertiseRelateId" flushCache="true"  >  
+   INSERT IGNORE INTO
+   		  advertise_relate_tb 
+   		 (
+   		 update_date,
+   		 advertise_space_id,
+   		 advertise_id
+   		 )
+   VALUES
+    	 (
+    	 #{updateDate},
+    	 #{advertiseSpaceId},
+    	 #{advertiseId}
+    	 )  
+</insert>  
+<!-- 更新广告位广告关系 -->
+<update id="updateAdvertiseRelate" parameterType="AdvertiseRelate" >  
+    UPDATE 
+    	advertise_relate_tb 
+    SET 
+    	update_date=#{updateDate},
+    	advertise_space_id=#{advertiseSpaceId},
+    	advertise_id=#{advertiseId}
+    WHERE
+    	 advertise_relate_id=#{advertiseRelateId} 
+</update> 
+<!-- 删除广告位广告关系-->
+<delete id="delAdvertiseRelate"  parameterType="Integer" >  
+    DELETE FROM
+    	 advertise_relate_tb 
+    	 WHERE advertise_relate_id=#{advertiseRelateId}
+</delete>  
+<!-- 加载广告位广告关系-->
+<select id="loadAdvertiseRelate" parameterType="Integer" resultType="AdvertiseRelate" >
+SELECT 
+		 advertise_relate_id,
+	 	 update_date,
+   		 advertise_space_id,
+   		 advertise_id
+FROM advertise_relate_tb 
+WHERE advertise_relate_id=#{advertiseRelateId}
+</select>
+
+<!-- 分页查询广告位广告关系-->
+<select id="browsePagingAdvertiseRelate" resultType="AdvertiseRelate">  
+    SELECT
+	     advertise_relate_id,
+	 	 update_date,
+   		 advertise_space_id,
+   		 advertise_id
+	FROM advertise_relate_tb
+	ORDER BY
+		${orderName}  ${orderWay}
+	LIMIT
+		#{pageNum},#{pageSize}
+</select> 
+
+<!-- 统计记录条数 -->
+<select id="countAll"  resultType="int">  
+	SELECT
+	 	count(advertise_relate_id)
+	FROM advertise_relate_tb
+</select>   
+   
+ 
+</mapper>

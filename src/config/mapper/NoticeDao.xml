@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+<mapper namespace="com.nieyue.dao.NoticeDao">
+<!-- 添加公告 -->
+<insert id="addNotice" parameterType="Notice" keyProperty="noticeId" flushCache="true"  >  
+   INSERT IGNORE INTO
+   		notice_tb 
+   		 (title,type,content,update_date)
+   VALUES
+    	 (#{title},#{type},#{content},
+    	 #{updateDate})  
+</insert>  
+<!-- 更新公告 -->
+<update id="updateNotice" parameterType="Notice" >  
+    UPDATE 
+    	notice_tb 
+    SET 
+    	title=#{title},
+    	type=#{type},
+    	content=#{content},
+    	update_date=#{updateDate}
+    WHERE
+    	 notice_id=#{noticeId} 
+</update> 
+<!-- 删除公告-->
+<delete id="delNotice"  parameterType="Integer" >  
+    DELETE FROM
+    	 notice_tb 
+    	 WHERE notice_id=#{noticeId}
+</delete>  
+<!-- 加载单个电话信息-->
+<select id="loadNotice" parameterType="Integer" resultType="Notice" >
+SELECT 
+		notice_id,
+    	title,
+	 	type,
+    	content,
+    	update_date
+FROM notice_tb 
+WHERE notice_id=#{noticeId}
+</select>
+<!-- 分页查询公告-->
+<select id="browsePagingNotice" resultType="Notice">  
+    SELECT
+	    notice_id,
+    	title,
+	 	type,
+    	content,
+    	update_date
+	FROM notice_tb
+	ORDER BY
+		${orderName}  ${orderWay}
+	LIMIT
+		#{pageNum},#{pageSize}
+</select> 
+
+<!-- 统计记录条数 -->
+<select id="countAll"  resultType="int">  
+	SELECT
+	 	count(notice_id)
+	FROM notice_tb
+</select>   
+   
+ 
+</mapper>

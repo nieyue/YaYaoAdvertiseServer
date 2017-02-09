@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>test.html</title>
+	 <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="keywords" content="keyword1,keyword2,keyword3">
+    <meta name="description" content="this is my page">
+       <link rel="stylesheet" href="resources/css/bootstrap.min.css">
+    <!--<link rel="stylesheet" type="text/css" href="./styles.css">-->
+
+  </head>
+  
+  <body>
+    <form name="f1" id="f1" action="" method="post">
+      <table>
+        <tr>
+          <td>Login:</td>
+          <td><input type="text" name="login" id="login"></td>
+        </tr>
+        <tr>
+          <td>Password:</td>
+          <td><input type="password" name="password" id="password"></td>
+        </tr> 
+        <tr>
+          <td colspan="2"><input type="submit"></td>
+        </tr>
+      </table>
+    </form>
+    <script>var advertise_space_id=1004</script>
+<script src='http://localhost/resources/js/yayaoadvertisespace.js'></script>
+  <script type="text/javascript">
+  function timeStampToDate(timeStamp){
+	    var date = new Date(timeStamp);
+	    Y = date.getFullYear() + '-';
+	    M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
+	    D = date.getDate() + ' ';
+	    h = date.getHours() + ':';
+	    m = date.getMinutes() + ':';
+	    s = date.getSeconds(); 
+	  return Y+M+D+h+m+s; 
+	  }
+  console.log(timeStampToDate(11111))
+ function currentToEndTime(){  
+		var enddate =new Date();
+ 		var date=new Date();
+ 		enddate.setHours(23);
+ 		enddate.setMinutes(59);
+ 		enddate.setSeconds(59);
+	 	var miao = (enddate.getTime()-date.getTime())/1000;
+		return miao;
+	} 
+  console.log(currentToEndTime()/60)
+  </script>
+  </body>
+</html>

@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+<mapper namespace="com.nieyue.dao.WebsiteDao">
+<!-- 添加网站 -->
+<insert id="addWebsite" parameterType="Website" keyProperty="websiteId" flushCache="true"  >  
+   INSERT IGNORE INTO
+   		  website_tb 
+   		 (name,
+   		 type,
+   		 url,
+   		 status,
+   		 remark,
+   		 update_date,
+   		 admin_id)
+   VALUES
+    	 (#{name},
+    	 #{type},
+    	 #{url},
+    	 #{status},
+    	 #{remark},
+    	 #{updateDate},
+    	 #{adminId})  
+</insert>  
+<!-- 更新网站 -->
+<update id="updateWebsite" parameterType="Website" >  
+    UPDATE 
+    	website_tb 
+    SET 
+    	name=#{name},
+    	type=#{type},
+    	url=#{url},
+    	status=#{status},
+    	remark=#{remark},
+    	update_date=#{updateDate},
+    	admin_id=#{adminId}
+    WHERE
+    	 website_id=#{websiteId} 
+</update> 
+<!-- 删除网站-->
+<delete id="delWebsite"  parameterType="Integer" >  
+    DELETE FROM
+    	 website_tb 
+    	 WHERE website_id=#{websiteId}
+</delete>  
+<!-- 加载网站-->
+<select id="loadWebsite" parameterType="Integer" resultType="Website" >
+SELECT 
+		 website_id,
+	 	 name,
+   		 type,
+   		 url,
+   		 status,
+   		 remark,
+   		 update_date,
+   		 admin_id
+FROM website_tb 
+WHERE website_id=#{websiteId}
+</select>
+
+<!-- 分页查询网站-->
+<select id="browsePagingWebsite" resultType="Website">  
+    SELECT
+	     website_id,
+	 	 name,
+   		 type,
+   		 url,
+   		 status,
+   		 remark,
+   		 update_date,
+   		 admin_id
+	FROM website_tb
+	ORDER BY
+		${orderName}  ${orderWay}
+	LIMIT
+		#{pageNum},#{pageSize}
+</select> 
+<!-- 根据adminId分页查询网站-->
+<select id="browsePagingWebsiteByAdminId" resultType="Website">  
+    SELECT
+	     website_id,
+	 	 name,
+   		 type,
+   		 url,
+   		 status,
+   		 remark,
+   		 update_date,
+   		 admin_id
+	FROM website_tb
+	WHERE admin_id=#{adminId}
+	ORDER BY
+		${orderName}  ${orderWay}
+	LIMIT
+		#{pageNum},#{pageSize}
+</select> 
+
+<!-- 统计记录条数 -->
+<select id="countAll"  resultType="int">  
+	SELECT
+	 	count(website_id)
+	FROM website_tb
+</select>   
+<!-- 根据管理员统计记录条数 -->
+<select id="countAllByAdminId"  resultType="int">  
+	SELECT
+	 	count(website_id)
+	FROM website_tb
+	WHERE admin_id=#{adminId}
+</select>   
+   
+ 
+</mapper>

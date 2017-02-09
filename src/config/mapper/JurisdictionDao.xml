@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+<mapper namespace="com.nieyue.dao.JurisdictionDao">
+<!-- 添加权限 -->
+<insert id="addJurisdiction" parameterType="Jurisdiction" keyProperty="jurisdictionId" flushCache="true"  >  
+   INSERT IGNORE INTO
+   		  jurisdiction_tb 
+   		 (name,
+   		 addtion,
+   		 deletion,
+   		 updation,
+   		 queries,
+   		 update_date,
+   		 role_id)
+   VALUES
+    	 (#{name},
+    	 #{addtion},
+    	 #{deletion},
+    	 #{updation},
+    	 #{queries},
+    	 #{updateDate},
+    	 #{roleId})  
+</insert>  
+<!-- 更新权限 -->
+<update id="updateJurisdiction" parameterType="Jurisdiction" >  
+    UPDATE 
+    	jurisdiction_tb 
+    SET 
+    	name=#{name},
+    	addtion=#{addtion},
+    	deletion=#{deletion},
+    	updation=#{updation},
+    	queries=#{queries},
+    	update_date=#{updateDate},
+    	role_id=#{roleId}
+    WHERE
+    	 jurisdiction_id=#{jurisdictionId} 
+</update> 
+<!-- 删除权限-->
+<delete id="delJurisdiction"  parameterType="Integer" >  
+    DELETE FROM
+    	 Jurisdiction_tb 
+    	 WHERE jurisdiction_id=#{jurisdictionId}
+</delete>  
+<!-- 加载权限-->
+<select id="loadJurisdiction" parameterType="Integer" resultType="Jurisdiction" >
+SELECT 
+		jurisdiction_id,
+	 	name,
+    	addtion,
+    	deletion,
+    	updation,
+    	queries,
+    	update_date,
+    	role_id
+FROM jurisdiction_tb 
+WHERE jurisdiction_id=#{jurisdictionId}
+</select>
+
+<!-- 分页查询权限-->
+<select id="browsePagingJurisdiction" resultType="Jurisdiction">  
+    SELECT
+	    jurisdiction_id,
+	 	name,
+    	addtion,
+    	deletion,
+    	updation,
+    	queries,
+    	update_date,
+    	role_id
+	FROM jurisdiction_tb
+	ORDER BY
+		${orderName}  ${orderWay}
+	LIMIT
+		#{pageNum},#{pageSize}
+</select> 
+
+<!-- 统计记录条数 -->
+<select id="countAll"  resultType="int">  
+	SELECT
+	 	count(jurisdiction_id)
+	FROM jurisdiction_tb
+</select>   
+   
+ 
+</mapper>

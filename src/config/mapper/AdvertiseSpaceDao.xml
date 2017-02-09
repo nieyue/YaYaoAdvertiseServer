@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+<mapper namespace="com.nieyue.dao.AdvertiseSpaceDao">
+<!-- 添加广告位 -->
+<insert id="addAdvertiseSpace" parameterType="AdvertiseSpace" keyProperty="advertiseSpaceId" flushCache="true"  >  
+   INSERT IGNORE INTO
+   		  advertise_space_tb 
+   		 (name,
+   		  platform,
+   		  type,
+   		  location,
+   		  unit_price,
+   		  now_unit_delivery_number,
+   		  now_unit_money,
+   		  status,
+   		  update_date,
+   		 admin_id)
+   VALUES
+    	 (#{name},
+    	 #{platform},
+    	 #{type},
+    	 #{location},
+    	 #{unitPrice},
+    	 #{nowUnitDeliveryNumber},
+    	 #{nowUnitMoney},
+    	 #{status},
+    	 #{updateDate},
+    	 #{adminId})  
+</insert>  
+<!-- 更新广告位 -->
+<update id="updateAdvertiseSpace" parameterType="AdvertiseSpace" >  
+    UPDATE 
+    	advertise_space_tb 
+    SET 
+    	name=#{name},
+    	platform=#{platform},
+    	type=#{type},
+    	location=#{location},
+    	unit_price=#{unitPrice},
+    	now_unit_delivery_number=#{nowUnitDeliveryNumber},
+    	now_unit_money=#{nowUnitMoney},
+    	status=#{status},
+    	update_date=#{updateDate},
+    	admin_id=#{adminId}
+    WHERE
+    	 advertise_space_id=#{advertiseSpaceId} 
+</update> 
+<!-- 删除广告位-->
+<delete id="delAdvertiseSpace"  parameterType="Integer" >  
+    DELETE FROM
+    	 advertise_space_tb 
+    	 WHERE advertise_space_id=#{advertiseSpaceId}
+</delete>  
+<!-- 加载广告位-->
+<select id="loadAdvertiseSpace" parameterType="Integer" resultType="AdvertiseSpace" >
+SELECT 
+		advertise_space_id,
+	 	name,
+    	platform,
+    	type,
+    	location,
+    	unit_price,
+   		now_unit_delivery_number,
+   		now_unit_money,
+    	status,
+    	update_date,
+    	admin_id
+FROM advertise_space_tb 
+WHERE advertise_space_id=#{advertiseSpaceId}
+</select>
+
+<!-- 分页查询广告位-->
+<select id="browsePagingAdvertiseSpace" resultType="AdvertiseSpace">  
+    SELECT
+	    advertise_space_id,
+	 	name,
+    	platform,
+    	type,
+    	location,
+    	unit_price,
+   		now_unit_delivery_number,
+   		now_unit_money,
+    	status,
+    	update_date,
+    	admin_id
+	FROM advertise_space_tb
+	ORDER BY
+		${orderName}  ${orderWay}
+	LIMIT
+		#{pageNum},#{pageSize}
+</select> 
+<!-- 根据adminId分页查询广告位-->
+<select id="browsePagingAdvertiseSpaceByAdminId" resultType="AdvertiseSpace">  
+    SELECT
+	    advertise_space_id,
+	 	name,
+    	platform,
+    	type,
+    	location,
+    	unit_price,
+   		now_unit_delivery_number,
+   		now_unit_money,
+    	status,
+    	update_date,
+    	admin_id
+	FROM advertise_space_tb
+	WHERE admin_id=#{adminId}
+	ORDER BY
+		${orderName}  ${orderWay}
+	LIMIT
+		#{pageNum},#{pageSize}
+</select> 
+
+<!-- 统计记录条数 -->
+<select id="countAll"  resultType="int">  
+	SELECT
+	 	count(advertise_space_id)
+	FROM advertise_space_tb
+</select>   
+<!-- 根据adminId统计记录条数 -->
+<select id="countAllByAdminId"  resultType="int">  
+	SELECT
+	 	count(advertise_space_id)
+	FROM advertise_space_tb
+	WHERE admin_id=#{adminId}
+</select>   
+   
+ 
+</mapper>

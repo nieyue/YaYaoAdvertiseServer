@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+<mapper namespace="com.nieyue.dao.WaterInformationDao">
+<!-- 添加流水信息 -->
+<insert id="addWaterInformation" parameterType="WaterInformation" keyProperty="waterInformationId" flushCache="true"  >  
+   INSERT IGNORE INTO
+   		  water_information_tb 
+   		 (
+   		 name,
+   		 type,
+   		 money,
+   		 create_date,
+   		 admin_id)
+   VALUES
+    	 (
+    	 #{name},
+    	 #{type},
+    	 #{money},
+    	 #{createDate},
+    	 #{adminId}
+    	 )  
+</insert>  
+<!-- 更新流水信息 -->
+<update id="updateWaterInformation" parameterType="WaterInformation" >  
+    UPDATE 
+    	water_information_tb 
+    SET 
+    	name=#{name},
+    	type=#{type},
+    	money=#{money},
+    	create_date=#{createDate},
+    	admin_id=#{adminId}
+    WHERE
+    	water_information_id=#{waterInformationId} 
+</update> 
+<!-- 删除流水信息-->
+<delete id="delWaterInformation"  parameterType="Integer" >  
+    DELETE FROM
+    	 water_information_tb 
+    	 WHERE water_information_id=#{waterInformationId}
+</delete>  
+<!-- 加载流水信息-->
+<select id="loadWaterInformation" parameterType="Integer" resultType="WaterInformation" >
+SELECT 
+		water_information_id,
+	 	name,
+    	type,
+    	money,
+    	create_date,
+    	admin_id
+FROM water_information_tb 
+WHERE water_information_id=#{waterInformationId}
+</select>
+
+<!-- 根据管理员Id和时间装载流水信息-->
+<select id="loadWaterInformationByAdminIdAndCreateDate" resultType="WaterInformation" >
+SELECT 
+		water_information_id,
+	 	name,
+    	type,
+    	money,
+    	create_date,
+    	admin_id
+FROM water_information_tb 
+WHERE admin_id=#{adminId}
+AND DATE(create_date)=DATE(#{createDate})
+</select>
+
+<!-- 分页查询流水信息-->
+<select id="browsePagingWaterInformation" resultType="WaterInformation">  
+    SELECT
+	    water_information_id,
+	 	name,
+    	type,
+    	money,
+    	create_date,
+    	admin_id
+	FROM water_information_tb
+	ORDER BY
+		${orderName}  ${orderWay}
+	LIMIT
+		#{pageNum},#{pageSize}
+</select> 
+<!-- 根据adminId分页查询流水信息-->
+<select id="browsePagingWaterInformationByAdminId" resultType="WaterInformation">  
+ SELECT
+	    water_information_id,
+	 	name,
+    	type,
+    	money,
+    	create_date,
+    	admin_id
+	FROM water_information_tb
+	WHERE admin_id=#{adminId}
+	ORDER BY
+		${orderName}  ${orderWay}
+	LIMIT
+		#{pageNum},#{pageSize}
+</select> 
+
+<!-- 统计记录条数 -->
+<select id="countAll"  resultType="int">  
+	SELECT
+	 	count(water_information_id)
+	FROM water_information_tb
+</select>   
+<!-- 根据adminId统计记录条数 -->
+<select id="countAllByAdminId"  resultType="int">  
+	SELECT
+	 	count(water_information_id)
+	FROM water_information_tb
+	WHERE admin_id=#{adminId}
+</select>  
+   
+ 
+</mapper>

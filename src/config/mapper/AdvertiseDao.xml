@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+<mapper namespace="com.nieyue.dao.AdvertiseDao">
+<!-- 添加广告 -->
+<insert id="addAdvertise" parameterType="Advertise" keyProperty="advertiseId" flushCache="true"  >  
+   INSERT IGNORE INTO
+   		  advertise_tb 
+   		 (
+   		 name,
+   		 type,
+   		 subtype,
+   		 img,
+   		 link,
+   		 unit_price,
+   		 unit_delivery_number,
+   		 now_unit_delivery_number,
+   		 unit_money,
+   		 now_unit_money,
+   		 status,
+   		 start_delivery_date,
+   		 end_delivery_date,
+   		 update_date,
+   		 admin_id)
+   VALUES
+    	 (
+    	 #{name},
+    	 #{type},
+    	 #{subtype},
+    	 #{img},
+    	 #{link},
+    	 #{unitPrice},
+    	 #{unitDeliveryNumber},
+    	 #{nowUnitDeliveryNumber},
+    	 #{unitMoney},
+    	 #{nowUnitMoney},
+    	 #{status},
+    	 #{startDeliveryDate},
+    	 #{endDeliveryDate},
+    	 #{updateDate},
+    	 #{adminId}
+    	 )  
+</insert>  
+<!-- 更新广告 -->
+<update id="updateAdvertise" parameterType="Advertise" >  
+    UPDATE 
+    	advertise_tb 
+    SET 
+    	name=#{name},
+    	type=#{type},
+    	subtype=#{subtype},
+    	img=#{img},
+    	link=#{link},
+    	unit_price=#{unitPrice},
+    	unit_delivery_number=#{unitDeliveryNumber},
+    	now_unit_delivery_number=#{nowUnitDeliveryNumber},
+    	unit_money=#{unitMoney},
+    	now_unit_money=#{nowUnitMoney},
+    	status=#{status},
+    	start_delivery_date=#{startDeliveryDate},
+    	end_delivery_date=#{endDeliveryDate},
+    	update_date=#{updateDate},
+    	admin_id=#{adminId}
+    WHERE
+    	 advertise_id=#{advertiseId} 
+</update> 
+<!-- 删除广告-->
+<delete id="delAdvertise"  parameterType="Integer" >  
+    DELETE FROM
+    	 advertise_tb 
+    	 WHERE advertise_id=#{advertiseId}
+</delete>  
+<!-- 加载广告-->
+<select id="loadAdvertise" parameterType="Integer" resultType="Advertise" >
+SELECT 
+		 advertise_id,
+	 	 name,
+   		 type,
+   		 subtype,
+   		 img,
+   		 link,
+   		 unit_price,
+   		 unit_delivery_number,
+   		 now_unit_delivery_number,
+   		 unit_money,
+   		 now_unit_money,
+   		 status,
+   		 start_delivery_date,
+   		 end_delivery_date,
+   		 update_date,
+   		 admin_id
+FROM advertise_tb 
+WHERE advertise_id=#{advertiseId}
+</select>
+<!-- 根据金额随机一条广告-->
+<select id="browsePagingAdvertiseSpaceShowAdvertise"  resultType="Advertise" >
+
+SELECT 
+		 advertise_id,
+	 	 name,
+   		 type,
+   		 subtype,
+   		 img,
+   		 link,
+   		 unit_price,
+   		 unit_delivery_number,
+   		 now_unit_delivery_number,
+   		 unit_money,
+   		 now_unit_money,
+   		 status,
+   		 start_delivery_date,
+   		 end_delivery_date,
+   		 update_date,
+   		 admin_id
+FROM advertise_tb as a1 
+JOIN (SELECT ROUND(RAND() * ((SELECT MAX(advertise_id) FROM advertise_tb)-(SELECT MIN(advertise_id) FROM advertise_tb))+(SELECT MIN(advertise_id) FROM advertise_tb)) AS aid) AS a2
+WHERE unit_price>=#{unitPrice} 
+AND status=#{status}
+AND a1.advertise_id = a2.aid
+</select>
+<!-- 根据金额随机一条广告 备胎-->
+<select id="browsePagingAdvertiseSpaceShowAdvertiseBei"  resultType="Advertise" >
+
+SELECT 
+		 advertise_id,
+	 	 name,
+   		 type,
+   		 subtype,
+   		 img,
+   		 link,
+   		 unit_price,
+   		 unit_delivery_number,
+   		 now_unit_delivery_number,
+   		 unit_money,
+   		 now_unit_money,
+   		 status,
+   		 start_delivery_date,
+   		 end_delivery_date,
+   		 update_date,
+   		 admin_id
+FROM advertise_tb 
+WHERE unit_price>=#{unitPrice} 
+AND status=#{status}
+</select>
+
+<!-- 分页查询广告-->
+<select id="browsePagingAdvertise" resultType="Advertise">  
+    SELECT
+	     advertise_id,
+	 	 name,
+   		 type,
+   		 subtype,
+   		 img,
+   		 link,
+   		 unit_price,
+   		 unit_delivery_number,
+   		 now_unit_delivery_number,
+   		 unit_money,
+   		 now_unit_money,
+   		 status,
+   		 start_delivery_date,
+   		 end_delivery_date,
+   		 update_date,
+   		 admin_id
+	FROM advertise_tb
+	ORDER BY
+		${orderName}  ${orderWay}
+	LIMIT
+		#{pageNum},#{pageSize}
+</select> 
+<!-- 根据adminId分页查询广告-->
+<select id="browsePagingAdvertiseByAdminId" resultType="Advertise">  
+    SELECT
+	     advertise_id,
+	 	 name,
+   		 type,
+   		 subtype,
+   		 img,
+   		 link,
+   		 unit_price,
+   		 unit_delivery_number,
+   		 now_unit_delivery_number,
+   		 unit_money,
+   		 now_unit_money,
+   		 status,
+   		 start_delivery_date,
+   		 end_delivery_date,
+   		 update_date,
+   		 admin_id
+	FROM advertise_tb
+	WHERE admin_id=#{adminId}
+	ORDER BY
+		${orderName}  ${orderWay}
+	LIMIT
+		#{pageNum},#{pageSize}
+</select> 
+
+<!-- 统计记录条数 -->
+<select id="countAll"  resultType="int">  
+	SELECT
+	 	count(advertise_id)
+	FROM advertise_tb
+</select>   
+<!-- 根据adminId统计记录条数 -->
+<select id="countAllByAdminId"  resultType="int">  
+	SELECT
+	 	count(advertise_id)
+	FROM advertise_tb
+	WHERE admin_id=#{adminId}
+</select>   
+   
+ 
+</mapper>

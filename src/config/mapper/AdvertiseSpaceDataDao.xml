@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+<mapper namespace="com.nieyue.dao.AdvertiseSpaceDataDao">
+<!-- 添加广告数据 -->
+<insert id="addAdvertiseSpaceData" parameterType="AdvertiseSpaceData" keyProperty="advertiseSpaceDataId" flushCache="true"  >  
+   INSERT IGNORE INTO
+   		  advertise_space_data_tb 
+   		 (
+   		 pvs,
+   		 uvs,
+   		 ips,
+   		 forward,
+   		 daily_day,
+   		 advertise_space_id
+   		 )
+   VALUES
+    	 (
+    	 #{pvs},
+    	 #{uvs},
+    	 #{ips},
+    	 #{forward},
+    	 #{dailyDay},
+    	 #{advertiseSpaceId})  
+</insert>  
+<!-- 更新广告数据 -->
+<update id="updateAdvertiseSpaceData" parameterType="AdvertiseSpaceData" >  
+    UPDATE 
+    	advertise_space_data_tb 
+    SET 
+   		 pvs=#{pvs},
+   		 uvs=#{uvs},
+   		 ips=#{ips},
+   		 forward=#{forward},
+   		 daily_day=#{dailyDay},
+   		 advertise_space_id=#{advertiseSpaceId}
+    WHERE
+    	 advertise_space_data_id=#{advertiseSpaceDataId} 
+</update> 
+<!-- 删除广告数据-->
+<delete id="delAdvertiseSpaceData"  parameterType="Integer" >  
+    DELETE FROM
+    	 advertise_space_data_tb 
+    	 WHERE advertise_space_data_id=#{advertiseSpaceDataId}
+</delete>  
+<!-- 加载广告数据-->
+<select id="loadAdvertiseSpaceData" parameterType="Integer" resultType="AdvertiseSpaceData" >
+SELECT 
+		 advertise_space_data_id,
+	 	 pvs,
+   		 uvs,
+   		 ips,
+   		 forward,
+   		 daily_day,
+   		 advertise_space_id
+FROM advertise_space_data_tb 
+WHERE advertise_space_data_id=#{advertiseSpaceDataId}
+</select>
+
+<!-- 根据广告位Id和时间装载广告数据-->
+<select id="loadAdvertiseSpaceDataByAdvertiseSpaceIdAndDailyDay"  resultType="AdvertiseSpaceData" >
+SELECT 
+		 advertise_space_data_id,
+	 	 pvs,
+   		 uvs,
+   		 ips,
+   		 forward,
+   		 daily_day,
+   		 advertise_space_id
+FROM advertise_space_data_tb 
+WHERE advertise_space_id=#{advertiseSpaceId}
+AND DATE(daily_day)=DATE(#{dailyDay})
+</select>
+
+<!-- 分页查询广告数据-->
+<select id="browsePagingAdvertiseSpaceData" resultType="AdvertiseSpaceData">  
+    SELECT
+	     advertise_space_data_id,
+	 	 pvs,
+   		 uvs,
+   		 ips,
+   		 forward,
+   		 daily_day,
+   		 advertise_space_id
+	FROM advertise_space_data_tb
+	ORDER BY
+		${orderName}  ${orderWay}
+	LIMIT
+		#{pageNum},#{pageSize}
+</select> 
+<!-- 根据广告位Id和时间段分页查询广告数据-->
+<select id="browsePagingAdvertiseSpaceDataByAdvertiseSpaceIdAndDailyDays" resultType="AdvertiseSpaceData">  
+    SELECT
+	     advertise_space_data_id,
+	 	 pvs,
+   		 uvs,
+   		 ips,
+   		 forward,
+   		 daily_day,
+   		 advertise_space_id
+	FROM advertise_space_data_tb
+	WHERE advertise_space_id=#{advertiseSpaceId}
+	AND daily_day 
+	BETWEEN #{startDailyDay} AND #{endDailyDay}
+	ORDER BY
+		${orderName}  ${orderWay}
+</select>
+<!-- 统计记录条数 -->
+<select id="countAll"  resultType="int">  
+	SELECT
+	 	count(advertise_space_data_id)
+	FROM advertise_space_data_tb
+</select>   
+   
+ 
+</mapper>

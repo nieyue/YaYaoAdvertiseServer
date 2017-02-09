@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"   
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">  
+<mapper namespace="com.nieyue.dao.AdvertiseDataDao">
+<!-- 添加广告数据 -->
+<insert id="addAdvertiseData" parameterType="AdvertiseData" keyProperty="advertiseDataId" flushCache="true"  >  
+   INSERT IGNORE INTO
+   		  advertise_data_tb 
+   		 (
+   		 pvs,
+   		 uvs,
+   		 ips,
+   		 forward,
+   		 daily_day,
+   		 advertise_id
+   		 )
+   VALUES
+    	 (
+    	 #{pvs},
+    	 #{uvs},
+    	 #{ips},
+    	 #{forward},
+    	 #{dailyDay},
+    	 #{advertiseId})  
+</insert>  
+<!-- 更新广告数据 -->
+<update id="updateAdvertiseData" parameterType="AdvertiseData" >  
+    UPDATE 
+    	advertise_data_tb 
+    SET 
+   		 pvs=#{pvs},
+   		 uvs=#{uvs},
+   		 ips=#{ips},
+   		 forward=#{forward},
+   		 daily_day=#{dailyDay},
+   		 advertise_id=#{advertiseId}
+    WHERE
+    	 advertise_data_id=#{advertiseDataId} 
+</update> 
+<!-- 删除广告数据-->
+<delete id="delAdvertiseData"  parameterType="Integer" >  
+    DELETE FROM
+    	 advertise_data_tb 
+    	 WHERE advertise_data_id=#{advertiseDataId}
+</delete>  
+<!-- 加载广告数据-->
+<select id="loadAdvertiseData" parameterType="Integer" resultType="AdvertiseData" >
+SELECT 
+		 advertise_data_id,
+	 	 pvs,
+   		 uvs,
+   		 ips,
+   		 forward,
+   		 daily_day,
+   		 advertise_id
+FROM advertise_data_tb 
+WHERE advertise_data_id=#{advertiseDataId}
+</select>
+<!-- 根据广告Id和时间装载广告数据-->
+<select id="loadAdvertiseDataByAdvertiseIdAndDailyDay"  resultType="AdvertiseData" >
+SELECT 
+		 advertise_data_id,
+	 	 pvs,
+   		 uvs,
+   		 ips,
+   		 forward,
+   		 daily_day,
+   		 advertise_id
+FROM advertise_data_tb 
+WHERE advertise_id=#{advertiseId}
+AND DATE(daily_day)=DATE(#{dailyDay})
+</select>
+
+<!-- 分页查询广告数据-->
+<select id="browsePagingAdvertiseData" resultType="AdvertiseData">  
+    SELECT
+	     advertise_data_id,
+	 	 pvs,
+   		 uvs,
+   		 ips,
+   		 forward,
+   		 daily_day,
+   		 advertise_id
+	FROM advertise_data_tb
+	ORDER BY
+		${orderName}  ${orderWay}
+	LIMIT
+		#{pageNum},#{pageSize}
+</select> 
+<!-- 根据广告Id和时间段分页查询广告数据-->
+<select id="browsePagingAdvertiseDataByAdvertiseIdAndDailyDays" resultType="AdvertiseData">  
+    SELECT
+	     advertise_data_id,
+	 	 pvs,
+   		 uvs,
+   		 ips,
+   		 forward,
+   		 daily_day,
+   		 advertise_id
+	FROM advertise_data_tb
+	WHERE advertise_id=#{advertiseId}
+	AND daily_day 
+	BETWEEN #{startDailyDay} AND #{endDailyDay}
+	ORDER BY
+		${orderName}  ${orderWay}
+</select> 
+
+<!-- 统计记录条数 -->
+<select id="countAll"  resultType="int">  
+	SELECT
+	 	count(advertise_data_id)
+	FROM advertise_data_tb
+</select>   
+   
+ 
+</mapper>

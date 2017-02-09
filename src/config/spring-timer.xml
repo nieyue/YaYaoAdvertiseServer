@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:cache="http://www.springframework.org/schema/cache" xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc
+	 http://www.springframework.org/schema/mvc/spring-mvc-4.2.xsd
+	http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context-4.2.xsd
+	http://www.springframework.org/schema/cache http://www.springframework.org/schema/cache/spring-cache-4.2.xsd
+	 ">
+ 	<!-- 配置自定义的时间任务(Job) -->  
+<bean id="myJob" class="com.nieyue.quartz.AdvertiseSpaceJob" />
+ 	<!-- 配置方法调用任务工厂(XXXJobDetailFactoryBean) --> 
+ 	<!-- <bean name="simpleJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+ 		<property name="targetObject" ref="myJob"></property>
+ 		<property name="targetMethod">
+ 				<value>dowork</value>
+ 		</property>
+ 	</bean> -->
+ 	<bean name="myJobDetail" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
+ 		<property name="targetObject" ref="myJob"></property>
+ 		<property name="targetMethod">
+ 				<value>addMoney</value>
+ 		</property>
+ 	</bean> 
+ 	<!-- 配置Simple触发器(SimpleTriggerFactoryBean) --> 
+ <!-- 	<bean name="simpleTrigger" class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean">
+    	<property name="jobDetail" ref="simpleJob"/>
+    	<property name="startDelay" value="5000"/>
+    	<property name="repeatInterval" value="1000"/>
+	</bean> -->
+	<!-- 配置Cron触发器(CronTriggerFactoryBean) -->  
+    <bean id="myJobTrigger"  
+        class="org.springframework.scheduling.quartz.CronTriggerFactoryBean">  
+        <property name="jobDetail">  
+            <ref bean="myJobDetail" />  
+        </property>  
+        <property name="cronExpression">  
+           <!--  每隔一秒钟执行一次   -->
+           <!--格式: [秒] [分] [小时] [日] [月] [周] [年]  -->
+           <value>0/1 * * * * ?</value>
+       <!--  每天4点 --> 
+        <!-- <value>0 0 4 * * ?</value> -->
+        </property>  
+    </bean>   
+	 <!-- 配置调度器工厂(SchedulerFactoryBean) -->
+ 	<bean name="schedulerFactory" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+    <property name="triggers">
+        <list>
+           <!--  <ref bean="simpleTrigger"/> -->
+            <ref bean="myJobTrigger"/>
+        </list>
+    </property>
+</bean>
+</beans>
