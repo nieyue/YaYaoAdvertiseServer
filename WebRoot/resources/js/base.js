@@ -53,12 +53,12 @@ var myUtils = {
 	 * 微信支付
 	 * 
 	 */
-	wxPay:function(appId, timeStamp, nonceStr, package1, signType, paySign,callback){
+	wxPay:function(appId, timeStamp, nonceStr, package, signType, paySign,callback){
 		wx.chooseWXPay({
 		        appId:appId, 
 		        timestamp:timeStamp, // 支付签名时间戳，注意微信jssdk中的所有使用timestamp字段均为小写。但最新版的支付后台生成签名使用的timeStamp字段名需大写其中的S字符
 		        nonceStr:nonceStr, // 支付签名随机串，不长于 32 位
-		        package:package1, // 统一支付接口返回的prepay_id参数值，提交格式如：prepay_id=***）
+		        package:package, // 统一支付接口返回的prepay_id参数值，提交格式如：prepay_id=***）
 		        signType:signType, // 签名方式，默认为'SHA1'，使用新版支付需传入'MD5'
 		        paySign:paySign, // 支付签名
 		        complete: function (res) {
@@ -76,6 +76,14 @@ var myUtils = {
 		           }    
 		        }
 			});
+	},
+	/**
+	 * 设置域名
+	 * 
+	 */
+	getDomain:function(){
+		//return "http://advertiseserver.yayao8.com";
+		return "http://localhost";
 	},
 	/**
 	 * 如果没选择店铺就404
@@ -110,6 +118,52 @@ var myUtils = {
     	});
 	},
 	/**
+	 * 刚刚/分钟前/小时前/天前/周前/月前/年前
+	 * dateTimeStamp :时间戳
+	 */
+	getDateDiff:function(dateTimeStamp){
+		var minute = 1000 * 60;
+		var hour = minute * 60;
+		var day = hour * 24;
+		var halfamonth = day * 15;
+		var month = day * 30;
+		var year = day * 365;
+		function dateDiff(dateTimeStamp){
+		var now = new Date().getTime();
+		var diffValue = now - dateTimeStamp;
+		if(diffValue < 0){
+		 //若日期不符则弹出窗口告之
+		 //alert("结束日期不能小于开始日期！");
+		 }
+		var yearC =diffValue/year;
+		var monthC =diffValue/month;
+		var weekC =diffValue/(7*day);
+		var dayC =diffValue/day;
+		var hourC =diffValue/hour;
+		var minC =diffValue/minute;
+		if(yearC>=1){
+		 result=parseInt(yearC) + "年前";
+		 }else if(monthC>=1){
+		 result= parseInt(monthC) + "月前";
+		 }
+		 else if(weekC>=1){
+		 result= parseInt(weekC) + "周前";
+		 }
+		 else if(dayC>=1){
+		 result= parseInt(dayC) +"天前";
+		 }
+		 else if(hourC>=1){
+		 result= parseInt(hourC) +"小时前";
+		 }
+		 else if(minC>=1){
+		 result= parseInt(minC) +"分钟前";
+		 }else
+		 result="刚刚";
+		return result;
+		}
+		return dateDiff(new Date(dateTimeStamp));
+	},
+	/**
 	 * 时间戳转yyyy-MM-dd hh:mm:ss
 	 * 
 	 */
@@ -124,6 +178,17 @@ var myUtils = {
 	return Y+M+D+h+m+s; 
 	},
 	/**
+	 * 时间戳转yyyy-MM-dd
+	 * 
+	 */
+	timeStampToDayDate:function(timeStamp){
+		var date = new Date(timeStamp);
+		Y = date.getFullYear() + '-';
+		M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
+		D = date.getDate();
+	return Y+M+D; 
+	},
+	/**
 	 * 时间戳转MM-dd
 	 * 
 	 */
@@ -132,6 +197,58 @@ var myUtils = {
 		M = (date.getMonth()+1 < 10 ? '0'+(date.getMonth()+1) : date.getMonth()+1) + '-';
 		D = date.getDate() + ' ';
 	return M+D; 
+	},
+   /**
+   * 获取当前当日00:00:00的时间
+   * 
+   */
+  todayStartTime:function(){  
+		var date=new Date();
+		date.setHours(0);
+		date.setMinutes(0);
+		date.setSeconds(0);
+		return date;
+	},
+	/**
+   * 获取当前当日23:59:59的时间
+   * 
+   */
+  todayEndTime:function(){  
+		var date=new Date();
+		date.setHours(23);
+		date.setMinutes(59);
+		date.setSeconds(59);
+		return date;
+	},
+	/**
+   * 获取n天前的00:00:00的时间
+   * 
+   */
+  beforeDayToTodayTime:function(n){  
+		var date=new Date();
+		date.setHours(0);
+		date.setMinutes(0);
+		date.setSeconds(0);
+		if(isNaN(n)||n<=0){
+			n=0;
+		}
+		var ndate=date.getTime()-1000*60*60*24*n;
+		return new Date(ndate);
+	},
+	/**
+   * 获取n天后的最后23:59:59的时间
+   * 
+   */
+  todayToNDayEndTime:function(n){  
+		var date=new Date();
+		date.setHours(23);
+		date.setMinutes(59);
+		date.setSeconds(59);
+		if(isNaN(n)||n<=0){
+			n=0;
+		}
+		var ndate=date.getTime()+1000*60*60*24*n;
+		return new Date(ndate);
 	},
 	/**
 	 * 获取当前url的参数
@@ -587,6 +704,20 @@ var myUtils = {
 	      	}
 	      	return isscrollbottom;
 },
+/**
+ * 提示
+ */
+myTipToast : function(imgUrl ) {
+	$("body")
+	.append(
+			"<div id='tipToastWarp' style='background-color:#000;position:fixed;width:100%;height:100%;top:0;left:0;opacity:0.9; z-index:999999999'>"
+			+"<img style='width:100%' src='"+imgUrl+"'/></div>"
+			);
+	$("#tipToastWarp").click(function(){
+		$("#tipToastWarp").remove();
+	});
+
+},
 	/**
 	 * 实现慢事件执行的toast
 	 */
@@ -637,7 +768,10 @@ var myUtils = {
 	/**
 	 * 底部加载toast
 	 */
-	myFootLoadingToast : function(bottom, fn,motion) {
+	myFootLoadingToast : function(position,bottom, fn,motion) {
+		if(!position){
+			position="fixed";
+		}
 		if(typeof bottom!='number'||isNaN(bottom)){
 			bottom=0;
 		}
@@ -658,11 +792,12 @@ var myUtils = {
 			}
 			return;
 		}
-		
-		
-		$("body")
-				.append(
-						"<div id='footToast' style='display:none;color:#fff;background-color:#ccc;text-align:center;line-height:30px;border:0px solid black;min-height:30px;width:100%;bottom:"+bottom+";left:0;position:fixed;'><canvas id='bottomloading'  height='30px' width='30px' style='display:inline-block;margin-bottom:-10px;' >您的浏览器不支持html5</canvas><span id='footToastValue'>正在努力加载中...</span></div>");
+		var appendOrAfter="append";
+		if(position=="relative"){
+			appendOrAfter="after";
+		}
+		$("body")[appendOrAfter](
+						"<div id='footToast' style='display:none;color:#fff;background-color:#ccc;text-align:center;line-height:30px;border:0px solid black;min-height:30px;width:100%;bottom:"+bottom+";left:0;position:"+position+";'><canvas id='bottomloading'  height='30px' width='30px' style='display:inline-block;margin-bottom:-10px;' >您的浏览器不支持html5</canvas><span id='footToastValue'>正在努力加载中...</span></div>");
 		
 			if(typeof fn=='function'){
 				fn();
@@ -752,6 +887,25 @@ var myUtils = {
 		$('#confirmDiv').remove();
 		$('#confirm').remove();
 		
+	});
+	},
+	/**
+	 * 自定义template
+	 */
+	myTemplate : function(value) {
+		var myTemplateWidth= 330;
+		var myTemplateMarginWidth= 165;
+		if(document.querySelector("html").offsetWidth>640){
+			myTemplateWidth= 860;
+			myTemplateMarginWidth= 430;
+		}
+		$("body")
+		.append(
+				"<div id='myTemplateDiv' style='position:fixed;width:100%;height:100%;background-color:#ccc;opacity:0.5;left:0;top:0;'></div><div id='myTemplate' style='z-index:9999;color:#000;background-color:#fff;text-align:center;line-height:30px;border:1px solid #fff;border-radius:5px;height:300px;width:"+myTemplateWidth+"px;margin:-100px -"+myTemplateMarginWidth+"px;top:50%;left:50%;position:fixed;font-size:20px;'>"
+				+ "<div style='position:absolute;top:20px;width:100%;text-align:center;'>"+value+"</div><div class='btn btn-default' style='position:absolute;right:15px;bottom:15px;width:80px;' id='myTemplateNo'>关闭</div></div>");
+	$('#myTemplateNo').click(function(){
+		$('#myTemplateDiv').remove();
+		$('#myTemplate').remove();	
 	});
 	},
 	/**

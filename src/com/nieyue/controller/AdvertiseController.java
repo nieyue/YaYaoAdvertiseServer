@@ -144,6 +144,8 @@ public class AdvertiseController {
 			@RequestParam("advertiseSpaceUv") Integer advertiseSpaceUv,
 			HttpSession session,HttpServletRequest request)  {
 		boolean isSuccess=false;
+		boolean advertisespacePay=false;//默认广告位不计费
+		boolean advertisePay=false;//默认广告不计费
 		Advertise daoadvertise = advertiseService.loadAdvertise(advertiseId);
 		if(daoadvertise.getStatus().equals("已结束")||daoadvertise.getStatus().equals("暂停")){
 			return StateResult.getFail();
@@ -158,40 +160,12 @@ public class AdvertiseController {
 		}
 		if(daoadvertise.getStatus().equals("投放中")){
 			/**
-			 * 广告位金钱更新
+			 * 广告位
 			 */
 			AdvertiseSpace daoadvertisespace = advertiseSpaceService.loadAdvertiseSpace(advertiseSpaceId);
-			daoadvertisespace.setNowUnitDeliveryNumber(daoadvertisespace.getNowUnitDeliveryNumber()+1);
-			daoadvertisespace.setNowUnitMoney(daoadvertisespace.getNowUnitDeliveryNumber()*daoadvertisespace.getUnitPrice());
-			isSuccess = advertiseSpaceService.updateAdvertiseSpace(daoadvertisespace);
-			/**
-			 * 网站主金钱更新、流水增加
-			 */
-			Admin adminadvertisespace= adminService.loadAdmin(daoadvertisespace.getAdminId());
-			double nowMoney2 = adminadvertisespace.getMoney()+daoadvertisespace.getNowUnitMoney();//盈利金钱
-			adminadvertisespace.setMoney(nowMoney2);
-			boolean um2 = adminService.updateAdmin(adminadvertisespace);
-			if(um2){
-				WaterInformation daowaterinformation2 = waterInformationService.loadWaterInformationByAdminIdAndCreateDate(daoadvertisespace.getAdminId(), new Date());
-				//不同天增加。
-				if(daowaterinformation2==null || daowaterinformation2.equals("")){
-					WaterInformation waterInformation2=new WaterInformation();
-					waterInformation2.setAdminId(daoadvertisespace.getAdminId());
-					waterInformation2.setName(daoadvertisespace.getName());
-					waterInformation2.setType("盈利");
-					waterInformation2.setMoney(daoadvertisespace.getUnitPrice());
-					//保存流水信息
-					if(daoadvertisespace.getNowUnitMoney()>0.00){					
-						waterInformationService.addWaterInformation(waterInformation2);
-					}
-				}else{
-					//同一天更新
-					daowaterinformation2.setName(daoadvertisespace.getName());
-					daowaterinformation2.setType("盈利");
-					daowaterinformation2.setMoney(daowaterinformation2.getMoney()+daoadvertisespace.getUnitPrice());
-					waterInformationService.updateWaterInformation(daowaterinformation2);
-				}
-			}
+			//daoadvertisespace.setNowUnitDeliveryNumber(daoadvertisespace.getNowUnitDeliveryNumber()+1);
+			//daoadvertisespace.setNowUnitMoney(daoadvertisespace.getNowUnitDeliveryNumber()*daoadvertisespace.getUnitPrice());
+			//isSuccess = advertiseSpaceService.updateAdvertiseSpace(daoadvertisespace);
 			/**
 			 * 
 			 *广告位数据增加、更新
@@ -199,12 +173,15 @@ public class AdvertiseController {
 			AdvertiseSpaceData advertiseSpaceData = advertiseSpaceDataService.loadAdvertiseSpaceDataByAdvertiseSpaceIdAndDailyDay(daoadvertisespace.getAdvertiseSpaceId(), new Date());
 			//如果没有当前的数据，增添加
 			if(advertiseSpaceData==null||advertiseSpaceData.equals("")){
+				advertisespacePay=true;
+				daoadvertisespace.setNowUnitDeliveryNumber(daoadvertisespace.getNowUnitDeliveryNumber()+1);
+				
 				AdvertiseSpaceData ads=new AdvertiseSpaceData();
 				ads.setAdvertiseSpaceId(daoadvertisespace.getAdvertiseSpaceId());
 				ads.setPvs(1l);
 				ads.setUvs(1l);
 				
-
+				
 				ads.setIps(1l);
 				ads.setForward(0l);
 			advertiseSpaceDataService.addAdvertiseSpaceData(ads);
@@ -219,7 +196,9 @@ public class AdvertiseController {
 		}else{
 			//有就更新
 			advertiseSpaceData.setPvs(advertiseSpaceData.getPvs()+1);
-			if(advertiseSpaceUv==1){				
+			if(advertiseSpaceUv==1){
+			advertisespacePay=true;
+			daoadvertisespace.setNowUnitDeliveryNumber(daoadvertisespace.getNowUnitDeliveryNumber()+1);	
 			advertiseSpaceData.setUvs(advertiseSpaceData.getUvs()+1);
 			}
 			//redis有就更新
@@ -245,14 +224,116 @@ public class AdvertiseController {
 			}
 			advertiseSpaceData.setForward(advertiseSpaceData.getForward()+0l);
 			advertiseSpaceDataService.updateAdvertiseSpaceData(advertiseSpaceData);
+			
 		}
+			if(advertisespacePay){
+				/**
+				 * 广告位金钱更新
+				 */
+				daoadvertisespace.setNowUnitMoney(daoadvertisespace.getNowUnitDeliveryNumber()*daoadvertisespace.getUnitPrice());
+				isSuccess = advertiseSpaceService.updateAdvertiseSpace(daoadvertisespace);				
+				/**
+				 * 网站主金钱更新、流水增加
+				 */
+				Admin adminadvertisespace= adminService.loadAdmin(daoadvertisespace.getAdminId());
+				double nowMoney2 = adminadvertisespace.getMoney()+daoadvertisespace.getNowUnitMoney();//盈利金钱
+				adminadvertisespace.setMoney(nowMoney2);
+				boolean um2 = adminService.updateAdmin(adminadvertisespace);
+				if(um2){
+					WaterInformation daowaterinformation2 = waterInformationService.loadWaterInformationByAdminIdAndCreateDate(daoadvertisespace.getAdminId(), new Date());
+					//不同天增加。
+					if(daowaterinformation2==null || daowaterinformation2.equals("")){
+						WaterInformation waterInformation2=new WaterInformation();
+						waterInformation2.setAdminId(daoadvertisespace.getAdminId());
+						waterInformation2.setName(daoadvertisespace.getName());
+						waterInformation2.setType("盈利");
+						waterInformation2.setMoney(daoadvertisespace.getUnitPrice());
+						//保存流水信息
+						if(daoadvertisespace.getNowUnitMoney()>0.00){					
+							waterInformationService.addWaterInformation(waterInformation2);
+						}
+					}else{
+						//同一天更新
+						daowaterinformation2.setName(daoadvertisespace.getName());
+						daowaterinformation2.setType("盈利");
+						daowaterinformation2.setMoney(daowaterinformation2.getMoney()+daoadvertisespace.getUnitPrice());
+						waterInformationService.updateWaterInformation(daowaterinformation2);
+					}
+				}
+			}
+			
+		
 			
 			
 			
 			/**
 			 * 广告金钱更新
 			 */
-			daoadvertise.setNowUnitDeliveryNumber(daoadvertise.getNowUnitDeliveryNumber()+1);
+			//daoadvertise.setNowUnitDeliveryNumber(daoadvertise.getNowUnitDeliveryNumber()+1);
+			//daoadvertise.setNowUnitMoney(daoadvertise.getNowUnitDeliveryNumber()*daoadvertise.getUnitPrice());
+			//isSuccess = advertiseService.updateAdvertise(daoadvertise);
+			
+			/**
+			 * 
+			 *广告数据增加、更新
+			 */
+			AdvertiseData advertiseData = advertiseDataService.loadAdvertiseDataByAdvertiseIdAndDailyDay(daoadvertise.getAdvertiseId(), new Date());
+			//如果没有当前的数据，增添加
+			if(advertiseData==null||advertiseData.equals("")){
+				advertisePay=true;
+			AdvertiseData ad=new AdvertiseData();
+			ad.setAdvertiseId(daoadvertise.getAdvertiseId());
+			ad.setPvs(1l);
+			ad.setUvs(1l);
+			daoadvertise.setNowUnitDeliveryNumber(daoadvertise.getNowUnitDeliveryNumber()+1);	
+			ad.setIps(1l);
+			ad.setForward(0l);
+			advertiseDataService.addAdvertiseData(ad);
+			//redis没有就先存储ip地址
+//			String[] advertiseDataIps={IPCountUtil.getIpAddr(request)};
+//			JSONArray ja=JSONArray.fromObject(advertiseDataIps);
+//			stringRedisTemplate.boundValueOps("advertiseDataIps"+advertiseData.getAdvertiseDataId()).set(ja.toString(), DateUtil.currentToEndTime(), TimeUnit.SECONDS);
+			
+			BoundSetOperations<String, String> bso = stringRedisTemplate.boundSetOps("advertiseDataIps"+ad.getAdvertiseDataId());
+			bso.expire(DateUtil.currentToEndTime(), TimeUnit.SECONDS);
+			bso.add(IPCountUtil.getIpAddr(request));
+			
+			}else{
+				//有就更新
+				advertiseData.setPvs(advertiseData.getPvs()+1);
+				if(advertiseUv==1){
+					advertisePay=true;
+					daoadvertise.setNowUnitDeliveryNumber(daoadvertise.getNowUnitDeliveryNumber()+1);	
+				advertiseData.setUvs(advertiseData.getUvs()+1);
+				}
+				//redis有就更新
+//				if(stringRedisTemplate.boundValueOps("advertiseDataIps"+advertiseData.getAdvertiseDataId()).get()!=null){
+//					JSONArray nja=JSONArray.fromObject(stringRedisTemplate.boundValueOps("advertiseSpaceDataIps"+advertiseData.getAdvertiseDataId()).get());
+//					//判断有无相等的ip
+//					boolean haveSample=false;
+//					for (int i = 0; i < nja.size(); i++) {
+//						String ip = (String) nja.get(i);
+//						if(ip.equals(IPCountUtil.getIpAddr(request))){
+//							haveSample=true;//有相等的
+//						}
+//					}
+//					if(!haveSample){
+//						nja.add(IPCountUtil.getIpAddr(request));
+//						advertiseData.setIps(advertiseData.getIps()+1);
+//					}
+//				}
+				BoundSetOperations<String, String> bso = stringRedisTemplate.boundSetOps("advertiseDataIps"+advertiseData.getAdvertiseDataId());
+				if(bso.getKey()!=null&& !bso.getKey().equals("")){
+						bso.add(IPCountUtil.getIpAddr(request));
+						advertiseData.setIps(Long.valueOf(bso.members().size()));
+				}
+				advertiseData.setForward(advertiseData.getForward()+0l);
+				advertiseDataService.updateAdvertiseData(advertiseData);
+			}
+			if(advertisePay){
+			/**
+			 * 广告金钱更新
+			 */
 			daoadvertise.setNowUnitMoney(daoadvertise.getNowUnitDeliveryNumber()*daoadvertise.getUnitPrice());
 			isSuccess = advertiseService.updateAdvertise(daoadvertise);
 			/**
@@ -282,61 +363,7 @@ public class AdvertiseController {
 					daowaterinformation.setMoney(daowaterinformation.getMoney()+daoadvertise.getUnitPrice());
 					waterInformationService.updateWaterInformation(daowaterinformation);
 				}
-				
 			}
-			/**
-			 * 
-			 *广告数据增加、更新
-			 */
-			AdvertiseData advertiseData = advertiseDataService.loadAdvertiseDataByAdvertiseIdAndDailyDay(daoadvertise.getAdvertiseId(), new Date());
-			//如果没有当前的数据，增添加
-			if(advertiseData==null||advertiseData.equals("")){
-			AdvertiseData ad=new AdvertiseData();
-			ad.setAdvertiseId(daoadvertise.getAdvertiseId());
-			ad.setPvs(1l);
-			ad.setUvs(1l);
-				
-			ad.setIps(1l);
-			ad.setForward(0l);
-			advertiseDataService.addAdvertiseData(ad);
-			//redis没有就先存储ip地址
-//			String[] advertiseDataIps={IPCountUtil.getIpAddr(request)};
-//			JSONArray ja=JSONArray.fromObject(advertiseDataIps);
-//			stringRedisTemplate.boundValueOps("advertiseDataIps"+advertiseData.getAdvertiseDataId()).set(ja.toString(), DateUtil.currentToEndTime(), TimeUnit.SECONDS);
-			
-			BoundSetOperations<String, String> bso = stringRedisTemplate.boundSetOps("advertiseDataIps"+ad.getAdvertiseDataId());
-			bso.expire(DateUtil.currentToEndTime(), TimeUnit.SECONDS);
-			bso.add(IPCountUtil.getIpAddr(request));
-			
-			}else{
-				//有就更新
-				advertiseData.setPvs(advertiseData.getPvs()+1);
-				if(advertiseUv==1){
-				advertiseData.setUvs(advertiseData.getUvs()+1);
-				}
-				//redis有就更新
-//				if(stringRedisTemplate.boundValueOps("advertiseDataIps"+advertiseData.getAdvertiseDataId()).get()!=null){
-//					JSONArray nja=JSONArray.fromObject(stringRedisTemplate.boundValueOps("advertiseSpaceDataIps"+advertiseData.getAdvertiseDataId()).get());
-//					//判断有无相等的ip
-//					boolean haveSample=false;
-//					for (int i = 0; i < nja.size(); i++) {
-//						String ip = (String) nja.get(i);
-//						if(ip.equals(IPCountUtil.getIpAddr(request))){
-//							haveSample=true;//有相等的
-//						}
-//					}
-//					if(!haveSample){
-//						nja.add(IPCountUtil.getIpAddr(request));
-//						advertiseData.setIps(advertiseData.getIps()+1);
-//					}
-//				}
-				BoundSetOperations<String, String> bso = stringRedisTemplate.boundSetOps("advertiseDataIps"+advertiseData.getAdvertiseDataId());
-				if(bso.getKey()!=null&& !bso.getKey().equals("")){
-						bso.add(IPCountUtil.getIpAddr(request));
-						advertiseData.setIps(Long.valueOf(bso.members().size()));
-				}
-				advertiseData.setForward(advertiseData.getForward()+0l);
-				advertiseDataService.updateAdvertiseData(advertiseData);
 			}
 			
 		}
