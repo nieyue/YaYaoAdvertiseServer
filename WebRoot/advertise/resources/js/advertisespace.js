@@ -10,8 +10,10 @@ var advertiseSpace=(function(){
     function advertiseSpace(UI,advertiseSpaceConfig){
        //广告UI ，默认移动端配置
        this.UI={
-        width:'95%',//宽度
+        width:'92%',//宽度
         height:'100%',//高度
+        fontSize:'18px',//字体大小
+        color:'#333',//字体颜色
         backgroundColor:'#fff',//背景颜色
         position:"relative",//默认相对定位
         left:'0',//默认0
@@ -105,6 +107,7 @@ var advertiseSpace=(function(){
             this.UI.position='relative';
             this.UI.zindex='9999'; 
             this.UI.width=oldWidth;  
+            this.UI.padding="10px 0px";
           }
 
           if(thisAdvertiseSpaceConfig[i].type=='悬浮'){
@@ -136,19 +139,18 @@ var advertiseSpace=(function(){
              //创建第一个a里面的text
             if(thisAdvertiseSpaceConfig[i].advertiseList[0].text){
              var firsttext=document.createElement("span");
-             firsttext.setAttribute("style","text-align:left;width:90%;color:#000;overflow:hidden;text-overflow: ellipsis;display: -webkit-box;-webkit-line-clamp:"+this.UI.textLine+";-webkit-box-orient: vertical; z-index:"+this.UI.zindex);
+             firsttext.setAttribute("style","text-align:left;width:100%;color:#000;overflow:hidden;text-overflow: ellipsis;display: -webkit-box;-webkit-line-clamp:"+this.UI.textLine+";-webkit-box-orient: vertical; z-index:"+this.UI.zindex+";font-size:"+this.UI.fontSize+";color:"+this.UI.color);
              firsttext.innerHTML=thisAdvertiseSpaceConfig[i].advertiseList[0].text;
              firsta.appendChild(firsttext);
-            }else{
-              textHeight='0px';
             }
+           
 
              if(thisAdvertiseSpaceConfig[i].advertiseList[0].img.length==1){
               var oneImgMargin='0';
               //悬浮的大图变小图
                if(thisAdvertiseSpaceConfig[i].type=='悬浮' && parseInt(imgHeight.slice(0,-2))>100){
                 imgHeight="100px";
-                var oneImgMargin="5px 0px -5px 0px";
+                var oneImgMargin="0px 0px -5px 0px";
               }
 
               var firstimg=document.createElement("img");
@@ -188,10 +190,10 @@ var advertiseSpace=(function(){
              firsta.setAttribute("href",thisAdvertiseSpaceConfig[i].advertiseList[0].link);
              firsta.setAttribute("target",'view_window');
              firsta.setAttribute("id",'aopen');
-             firsta.setAttribute("style","text-align:center;text-decoration:none !important;display:block;border-bottom:1px solid #ccc;width:100%;height:"+firstaHeight+";");
+             firsta.setAttribute("style","text-align:center;text-decoration:none !important;display:block;border-bottom:1px solid #ccc;width:100%;height:"+firstaHeight+";padding:"+this.UI.padding);
 
             //div 属性 
-             thisDiv.setAttribute("style","z-index:"+this.UI.zindex+";padding:"+this.UI.padding+";background-color:"+this.UI.backgroundColor+";position:"+this.UI.position+";left:"+this.UI.left+";top:"+this.UI.top+";bottom:"+this.UI.bottom+";height:"+divHeight+";width:"+this.UI.width+";margin:"+this.UI.margin);
+             thisDiv.setAttribute("style","z-index:"+this.UI.zindex+";background-color:"+this.UI.backgroundColor+";position:"+this.UI.position+";left:"+this.UI.left+";top:"+this.UI.top+";bottom:"+this.UI.bottom+";height:"+divHeight+";width:"+this.UI.width+";margin:"+this.UI.margin);
              thisDiv.setAttribute('id',"ui");
             
              //把a导入div,把div导入body
@@ -207,7 +209,7 @@ var advertiseSpace=(function(){
              seconda.innerHTML="×";
              seconda.setAttribute("href",'javascript:;');
              seconda.setAttribute("id",'aclose');
-             seconda.setAttribute("style","position:absolute;top:0;right:1px;border:1px solid #ccc; background-color:#ccc;color:white;height:20px;width:20px;line-height:20px;text-align:center;font-size:22px;text-decoration:none;");
+             seconda.setAttribute("style","opacity:0.5;position:absolute;top:0;right:1px;border:1px solid #000; background-color:#000;color:white;height:20px;width:20px;line-height:20px;text-align:center;font-size:22px;text-decoration:none;");
              thisDiv.appendChild(seconda);
              }
     }//移动端 end
@@ -219,11 +221,12 @@ var advertiseSpace=(function(){
         this.UI.left='0';
         this.UI.top='0';
         this.UI.margin='auto';
-        this.UI.padding='2px';
+        this.UI.padding='10px';
          var location;
           if(thisAdvertiseSpaceConfig[i].type=='内嵌'){
             this.UI.zindex='9999';
             this.UI.position='relative';
+            this.UI.height='auto';
             if(thisAdvertiseSpaceConfig[i].location=='顶部'){
               location='insertBefore';
             }
@@ -250,7 +253,7 @@ var advertiseSpace=(function(){
 
             //创建div
              var thisDiv=document.createElement("div");
-             thisDiv.setAttribute("style","border-bottom:1px solid #ccc;background-color:"+this.UI.backgroundColor+";position:"+this.UI.position+";left:"+this.UI.left+";top:"+this.UI.top+";height:"+this.UI.height+";width:"+this.UI.width+";margin:"+this.UI.margin+";z-index:"+this.UI.zindex+";margin-bottom:10px;");
+             thisDiv.setAttribute("style","border-bottom:1px solid #ccc;background-color:"+this.UI.backgroundColor+";position:"+this.UI.position+";left:"+this.UI.left+";top:"+this.UI.top+";height:"+this.UI.height+";width:"+this.UI.width+";margin:"+this.UI.margin+";z-index:"+this.UI.zindex+";margin-bottom:0px;");
              thisDiv.setAttribute('id',"ui");
              
                
@@ -258,45 +261,54 @@ var advertiseSpace=(function(){
               for(var k=0;k<thisAdvertiseSpaceConfig[i].advertiseList.length;k++){                 
                 if(thisAdvertiseSpaceConfig[i].advertiseList.length<=3){
                         var width="";
-                        var height="";
+                        var height="80%";
                         if(thisAdvertiseSpaceConfig[i].advertiseList.length==1){
-                            width="98%";
-                            height="85%";
+                            width="960px";
+                            height="360px";
+                             if(thisAdvertiseSpaceConfig[i].type=='悬浮'){
+                              width="100%";
+                              height=(245-parseInt(this.UI.padding.slice(0,-2))*2)+'px';
+                              //height="245px";
+                             }
                         }
                          if(thisAdvertiseSpaceConfig[i].advertiseList.length==2){
-                           width="477px";
-                            height="82%";
+                           width="480px";
+                           height="180px";
                          }
                           if(thisAdvertiseSpaceConfig[i].advertiseList.length==3){
-                           width="318px";
-                            height="82%";
+                           width="320px";
+                           height="120px";
                          }
                         //有图片
                       if(thisAdvertiseSpaceConfig[i].advertiseList[k].img && thisAdvertiseSpaceConfig[i].advertiseList[k].img.length>0){
                    var  firsta=document.createElement("a");
                           firsta.setAttribute("href",thisAdvertiseSpaceConfig[i].advertiseList[k].link);
                         firsta.setAttribute("id",'aopen');
-                      firsta.setAttribute("style","padding:"+this.UI.padding+";text-decoration:none !important;box-sizing:border-box;display:inline-block;width:"+width+";height:100%;");
+                      firsta.setAttribute("style","padding:"+this.UI.padding+";text-decoration:none !important;box-sizing:border-box;display:inline-block;width:"+width+";height:auto;");
                        var firstimg=document.createElement("img");
-                       firstimg.setAttribute("style","padding:"+this.UI.padding+";width:100%;height:"+height+";z-index:"+this.UI.zindex);
+                       firstimg.setAttribute("style","width:100%;height:"+height+";z-index:"+this.UI.zindex);
                        firstimg.setAttribute("src",thisAdvertiseSpaceConfig[i].advertiseList[k].img[0]);
-                       var firsttext=document.createElement("span");
-                     firsttext.setAttribute("style","overflow:hidden;text-overflow: ellipsis;display: -webkit-box;-webkit-line-clamp:1;-webkit-box-orient: vertical; text-align:center;width:100%;height:15%;color:#000;z-index:"+this.UI.zindex);
-                     firsttext.innerHTML=thisAdvertiseSpaceConfig[i].advertiseList[k].text;
                        firsta.appendChild(firstimg);
+                      
+                      if(thisAdvertiseSpaceConfig[i].advertiseList[k].text){
+                     var firsttext=document.createElement("span");
+                     firsttext.setAttribute("style","overflow:hidden;text-overflow: ellipsis;display: -webkit-box;-webkit-line-clamp:2;-webkit-box-orient: vertical; text-align:center;width:100%;height:15%;color:#000;z-index:"+this.UI.zindex+";font-size:"+this.UI.fontSize+";color:"+this.UI.color);
+                     firsttext.innerHTML=thisAdvertiseSpaceConfig[i].advertiseList[k].text;
                      firsta.appendChild(firsttext);
+                      }
+
                      //把a导入div,把div导入body
                   thisDiv.appendChild(firsta);
                       }else{
                         //没图片
                        var  firstspan=document.createElement("span");
-                      firstspan.setAttribute("style","vertical-align:middle;line-height:30px;padding:"+this.UI.padding+";box-sizing:border-box;display:inline-block;width:"+width+";height:280px;");
+                      firstspan.setAttribute("style","vertical-align:top;line-height:30px;padding:"+this.UI.padding+";box-sizing:border-box;display:inline-block;width:"+width+";height:"+this.UI.height+";");
                         if(thisAdvertiseSpaceConfig[i].advertiseList[k].length>5||thisAdvertiseSpaceConfig[i].advertiseList[k].length<1){
                           throw new Error("文字链数目1~5！");
                         }
                         for(var y=0;y<thisAdvertiseSpaceConfig[i].advertiseList[k].length;y++){  
                        var firsta=document.createElement("a");
-                     firsta.setAttribute("style","overflow:hidden;text-overflow: ellipsis;display: -webkit-box;-webkit-line-clamp:1;-webkit-box-orient: vertical; text-decoration:none;font-size:18px;width:100%;color:#000;z-index:"+this.UI.zindex);
+                     firsta.setAttribute("style","overflow:hidden;text-overflow: ellipsis;display: -webkit-box;-webkit-line-clamp:1;-webkit-box-orient: vertical; text-decoration:none;width:100%;z-index:"+this.UI.zindex+";font-size:"+this.UI.fontSize+";color:"+this.UI.color);
                      firsta.innerHTML=thisAdvertiseSpaceConfig[i].advertiseList[k][y].text;
                      firsta.setAttribute("href",thisAdvertiseSpaceConfig[i].advertiseList[k][y].link);
                      firsta.setAttribute("id",'aopen');
@@ -325,7 +337,7 @@ var advertiseSpace=(function(){
              seconda.innerHTML="×";
              seconda.setAttribute("href",'javascript:;');
              seconda.setAttribute("id",'aclose');
-             seconda.setAttribute("style","position:absolute;top:-22px;right:1px;border:1px solid #ccc; background-color:#ccc;color:white;height:20px;width:20px;line-height:20px;text-align:center;font-size:22px;text-decoration:none;");
+             seconda.setAttribute("style","opacity:0.5;position:absolute;top:-22px;right:1px;border:1px solid #000; background-color:#000;color:white;height:20px;width:20px;line-height:20px;text-align:center;font-size:22px;text-decoration:none;");
              thisDiv.appendChild(seconda);
             }
 

@@ -197,8 +197,6 @@ public class AdvertiseController {
 			//有就更新
 			advertiseSpaceData.setPvs(advertiseSpaceData.getPvs()+1);
 			if(advertiseSpaceUv==1){
-			advertisespacePay=true;
-			daoadvertisespace.setNowUnitDeliveryNumber(daoadvertisespace.getNowUnitDeliveryNumber()+1);	
 			advertiseSpaceData.setUvs(advertiseSpaceData.getUvs()+1);
 			}
 			//redis有就更新
@@ -219,8 +217,15 @@ public class AdvertiseController {
 //			}
 			BoundSetOperations<String, String> bso2 = stringRedisTemplate.boundSetOps("advertiseSpaceDataIps"+advertiseSpaceData.getAdvertiseSpaceDataId());
 			if(bso2.getKey()!=null&& !bso2.getKey().equals("")){
-					bso2.add(IPCountUtil.getIpAddr(request));
-					advertiseSpaceData.setIps(Long.valueOf(bso2.members().size()));
+					int oldSize = bso2.members().size();
+				bso2.add(IPCountUtil.getIpAddr(request));
+					int newSize = bso2.members().size();
+					advertiseSpaceData.setIps(Long.valueOf(newSize));
+					//ip增加了
+					if(oldSize<newSize){
+						advertisespacePay=true;
+						daoadvertisespace.setNowUnitDeliveryNumber(daoadvertisespace.getNowUnitDeliveryNumber()+1);	
+					}
 			}
 			advertiseSpaceData.setForward(advertiseSpaceData.getForward()+0l);
 			advertiseSpaceDataService.updateAdvertiseSpaceData(advertiseSpaceData);
