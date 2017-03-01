@@ -41,7 +41,7 @@
         <property name="cronExpression">  
            <!--  每隔一秒钟执行一次   -->
            <!--格式: [秒] [分] [小时] [日] [月] [周] [年]  -->
-           <value>0/1 * * * * ?</value>
+           <value>0 0/20 * * * ?</value>
        <!--  每天4点 --> 
         <!-- <value>0 0 4 * * ?</value> -->
         </property>  

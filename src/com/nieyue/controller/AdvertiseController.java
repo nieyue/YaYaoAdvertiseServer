@@ -218,7 +218,7 @@ public class AdvertiseController {
 			BoundSetOperations<String, String> bso2 = stringRedisTemplate.boundSetOps("advertiseSpaceDataIps"+advertiseSpaceData.getAdvertiseSpaceDataId());
 			if(bso2.getKey()!=null&& !bso2.getKey().equals("")){
 					int oldSize = bso2.members().size();
-				bso2.add(IPCountUtil.getIpAddr(request));
+				 bso2.add(IPCountUtil.getIpAddr(request));
 					int newSize = bso2.members().size();
 					advertiseSpaceData.setIps(Long.valueOf(newSize));
 					//ip增加了
@@ -307,8 +307,6 @@ public class AdvertiseController {
 				//有就更新
 				advertiseData.setPvs(advertiseData.getPvs()+1);
 				if(advertiseUv==1){
-					advertisePay=true;
-					daoadvertise.setNowUnitDeliveryNumber(daoadvertise.getNowUnitDeliveryNumber()+1);	
 				advertiseData.setUvs(advertiseData.getUvs()+1);
 				}
 				//redis有就更新
@@ -329,8 +327,15 @@ public class AdvertiseController {
 //				}
 				BoundSetOperations<String, String> bso = stringRedisTemplate.boundSetOps("advertiseDataIps"+advertiseData.getAdvertiseDataId());
 				if(bso.getKey()!=null&& !bso.getKey().equals("")){
+					int oldSize = bso.members().size();
 						bso.add(IPCountUtil.getIpAddr(request));
-						advertiseData.setIps(Long.valueOf(bso.members().size()));
+					int newSize = bso.members().size();
+						advertiseData.setIps(Long.valueOf(newSize));
+							//ip增加了
+							if(oldSize<newSize){
+								advertisePay=true;
+								daoadvertise.setNowUnitDeliveryNumber(daoadvertise.getNowUnitDeliveryNumber()+1);
+							}
 				}
 				advertiseData.setForward(advertiseData.getForward()+0l);
 				advertiseDataService.updateAdvertiseData(advertiseData);

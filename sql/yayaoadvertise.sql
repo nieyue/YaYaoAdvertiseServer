@@ -32,6 +32,7 @@ bank_name varchar(255) COMMENT '开户银行',
 bank_account varchar(255) COMMENT '银行账号',
 bank_address varchar(255) COMMENT '开户银行地址',
 status varchar(255) COMMENT '账号状态',
+parent_id int(11) COMMENT '父id',
 role_id int(11) COMMENT '角色id外键',
 create_date datetime COMMENT '账号创建时间',
 last_login_date datetime COMMENT '最新登录时间',
@@ -188,6 +189,10 @@ INSERT IGNORE INTO role_tb (name,duty,update_date)
 VALUES ("渠道主","投放广告位",now());  
 INSERT IGNORE INTO role_tb (name,duty,update_date) 
 VALUES ("广告主","推广广告",now());  
+INSERT IGNORE INTO role_tb (name,duty,update_date) 
+VALUES ("二级渠道主","投放广告位二级代理",now());  
+INSERT IGNORE INTO role_tb (name,duty,update_date) 
+VALUES ("二级广告主","推广广告二级代理",now());  
 
 #设置初始权限
 INSERT IGNORE INTO jurisdiction_tb (name,addtion,deletion,updation,queries,update_date,role_id) 

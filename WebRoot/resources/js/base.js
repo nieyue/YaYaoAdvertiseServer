@@ -1099,46 +1099,53 @@ var myTouchEvents = {
 	},
 	/**
 	 * 拖拽事件
-	 * element 多个元素
+	 * element 多个被拖拽元素
+	 * bar element中触发拖拽的元素
 	 */
-	myDraggable:function(element,startFn,moveFn,endFn){
+	myDraggable:function(element,bar,startFn,moveFn,endFn){
 		myTouchEvents.initTouchEvents();
 		 $(element).each(function(){
          var thiselement=this;
          var dragging = false;
-         var iX, iY;
+         var sX=0, sY=0,mX=0,mY=0,eX=0,eY=0;
          var thiszindex= $(thiselement).css("z-index");
-         $(thiselement).on(myTouchEvents.touchstart,function(e) {
+		  //$(thiselement).off();
+         $(bar).on(myTouchEvents.touchstart,function(e) {
         	 e.preventDefault();
              dragging = true;
              $(thiselement).css("z-index","999999999");
              e.clientX==undefined?e.clientX=e.originalEvent.targetTouches[0].pageX:e.clientX;
              e.clientY==undefined?e.clientY=e.originalEvent.targetTouches[0].pageY:e.clientY;
-             iX = e.clientX - thiselement.offsetLeft;
-             iY = e.clientY - thiselement.offsetTop;
+             sX = e.clientX ;
+             sY = e.clientY ;
              if(typeof startFn=='function'){
             	 startFn();
              }
              return false;
          });
-         $(thiselement).on(myTouchEvents.touchmove,function(e) {
+         $(bar).on(myTouchEvents.touchmove,function(e) {
         	 e.preventDefault();
              if (dragging) {
-             var e = e || window.event;
+             //var e = e || window.event;
              e.clientX==undefined?e.clientX=e.originalEvent.targetTouches[0].pageX:e.clientX;
              e.clientY==undefined?e.clientY=e.originalEvent.targetTouches[0].pageY:e.clientY;
-             var oX = e.clientX - iX;
-             var oY = e.clientY - iY;
-             $(thiselement).css({"left":oX + "px", "top":oY + "px"});
+             mX = e.clientX - sX+eX;
+             mY= e.clientY - sY+eY;
+			// console.log(mX)
+             $(thiselement).css({"left":mX + "px", "top":mY + "px"});
              if(typeof moveFn=='function'){
             	 moveFn();
              }
              return false;
              }
          });
-         $(thiselement).on(myTouchEvents.touchend,function(e) {
+         $(bar).on(myTouchEvents.touchend,function(e) {
         	 e.preventDefault();
              dragging = false;
+			 eX =parseInt( $(thiselement).css("left"));
+             eY = parseInt($(thiselement).css("top"));
+			//  eX = e.clientX ;
+            //  eY = e.clientY ;
              if(typeof endFn=='function'){
             	 endFn();
              }
@@ -1174,3 +1181,5 @@ myUtils.loading(document.querySelector('#bottomloading'),{radius:8,circleLineWid
  * $(this).attr("href",$(this).attr("href")+"?sellerid="+myUtils.GetQueryString("sellerid")); }
  * });
  */
+//模态框
+//myTouchEvents.myDraggable(".modal-dialog",".modal-header",null,null,null)

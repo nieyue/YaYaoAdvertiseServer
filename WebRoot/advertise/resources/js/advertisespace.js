@@ -147,9 +147,11 @@ var advertiseSpace=(function(){
 
              if(thisAdvertiseSpaceConfig[i].advertiseList[0].img.length==1){
               var oneImgMargin='0';
+                  imgHeight='100%';
               //悬浮的大图变小图
-               if(thisAdvertiseSpaceConfig[i].type=='悬浮' && parseInt(imgHeight.slice(0,-2))>100){
-                imgHeight="100px";
+               if(thisAdvertiseSpaceConfig[i].type=='悬浮'){
+                //imgHeight="100px";
+                imgHeight="31.25%";//宽高比16:5
                 var oneImgMargin="0px 0px -5px 0px";
               }
 
@@ -158,7 +160,8 @@ var advertiseSpace=(function(){
               firstimg.setAttribute("src",thisAdvertiseSpaceConfig[i].advertiseList[0].img[0]);
               firsta.appendChild(firstimg);
               }else if(thisAdvertiseSpaceConfig[i].advertiseList[0].img.length==2){
-                imgHeight='80px';
+                //imgHeight='80px';
+                imgHeight="100%";
                
               //创建第一个a里面的第一个img
               var firstimg=document.createElement("img");
@@ -172,7 +175,8 @@ var advertiseSpace=(function(){
               firsta.appendChild(firstimg2);
                console.log(firsta)
               }else if(thisAdvertiseSpaceConfig[i].advertiseList[0].img.length==3){
-                imgHeight='75px';
+                //imgHeight='75px';
+                imgHeight="100%";
               //创建第一个a里面的第n个img
               for(var k=0;k<thisAdvertiseSpaceConfig[i].advertiseList[0].img.length;k++){ 
              var firstimg=document.createElement("img");
@@ -268,7 +272,7 @@ var advertiseSpace=(function(){
                              if(thisAdvertiseSpaceConfig[i].type=='悬浮'){
                               width="100%";
                               height=(245-parseInt(this.UI.padding.slice(0,-2))*2)+'px';
-                              //height="245px";
+                              //height="225px";
                              }
                         }
                          if(thisAdvertiseSpaceConfig[i].advertiseList.length==2){
@@ -295,6 +299,12 @@ var advertiseSpace=(function(){
                      firsttext.setAttribute("style","overflow:hidden;text-overflow: ellipsis;display: -webkit-box;-webkit-line-clamp:2;-webkit-box-orient: vertical; text-align:center;width:100%;height:15%;color:#000;z-index:"+this.UI.zindex+";font-size:"+this.UI.fontSize+";color:"+this.UI.color);
                      firsttext.innerHTML=thisAdvertiseSpaceConfig[i].advertiseList[k].text;
                      firsta.appendChild(firsttext);
+                      }
+                      //悬浮没有文字
+                      if(!thisAdvertiseSpaceConfig[i].advertiseList[k].text && thisAdvertiseSpaceConfig[i].type=='悬浮'){
+                        thisDiv.style.height='250px';
+                        thisDiv.style.top='auto';
+                        thisDiv.style.bottom='0px';
                       }
 
                      //把a导入div,把div导入body
@@ -353,7 +363,7 @@ var advertiseSpace=(function(){
               },false);
              }
 
-    
+
             //监听第一个
              var aopenAll = document.querySelectorAll("#ui #aopen");
              var aopenAllBackgroundColor;
