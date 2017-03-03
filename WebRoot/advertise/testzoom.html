@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimum-scale=1.0, maximum-scale=1.0">
+
+<title>iScroll demo: 2d scroll</title>
+<style type="text/css">
+	
+	*{
+		margin:0;
+		padding:0;
+	}
+</style>
+</head>
+<body onload="loaded()">
+<div id="header">iScroll</div>
+<button onclick="zoomout()">zoomout</button>
+<button onclick="zoomin()">zoomin</button>
+
+<div style="text-align:center;">
+	<img style="width:30%;height:100%;" src="https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=425820864,3069106875&fm=170&s=7AA2CC4FDA5E105500F1A0A203006043&w=218&h=146&img.JPEG"/>
+	<img style="width:30%;height:100%;" src="https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=425820864,3069106875&fm=170&s=7AA2CC4FDA5E105500F1A0A203006043&w=218&h=146&img.JPEG"/>
+	<img style="width:30%;height:100%;" src="https://ss0.baidu.com/6ONWsjip0QIZ8tyhnq/it/u=425820864,3069106875&fm=170&s=7AA2CC4FDA5E105500F1A0A203006043&w=218&h=146&img.JPEG"/>
+
+</div>
+<div id="footer">
+	
+</div>
+<script type="text/JavaScript">
+
+var size = 1.0;  
+function zoomout() {  
+ size = size + 0.1;  
+ set(size); 
+}  
+
+
+function zoomin() {  
+ size = size - 0.1;  
+ set(size);  
+}  
+
+
+function set(size) {  
+ //document.body.style.cssText = document.body.style.cssText + '; -webkit-transform: scale(' + size + ');-webkit-transform-origin: 0 0;';   
+ //document.body.style.cssText = document.body.style.cssText + '; -webkit-transform: scale(' + size + '); '; 
+ //$(body).css("width","120%);
+document.body.style.zoom = size;
+document.body.style.cssText += '; -moz-transform: scale(' + size + ');-moz-transform-origin: 0 0; ';     //
+} 
+(function boostarpSet() {  
+ addEventListener("resize",function(){
+var size=1;
+ if(window.outerWidth<=640){
+size=0.55;
+ }else if(window.outerWidth<=960){
+ 	size=0.6;
+ }else if(window.outerWidth<=1280){
+ 	size=0.7;
+ }else if(window.outerWidth<=1600){
+ 	size=0.8;
+ }
+document.body.style.zoom = size;
+document.body.style.cssText += '; -moz-transform: scale(' + size + ');-moz-transform-origin: 0 0; ';     //
+},false);
+ 
+} )();
+
+addEventListener("resize",function(){
+	console.log(2222)
+},false);
+    </script>
+</body>
+</html>

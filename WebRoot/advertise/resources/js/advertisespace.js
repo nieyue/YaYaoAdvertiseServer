@@ -1,7 +1,6 @@
 ;(function(window){
 document.querySelector('body').style.margin=0;
 document.querySelector('body').style.padding=0;
-
 var advertiseSpace=(function(){
 /**
 **对象初始化
@@ -12,8 +11,8 @@ var advertiseSpace=(function(){
        this.UI={
         width:'92%',//宽度
         height:'100%',//高度
-        fontSize:'18px',//字体大小
-        color:'#333',//字体颜色
+        fontSize:'16px',//字体大小
+        color:'#000',//字体颜色
         backgroundColor:'#fff',//背景颜色
         position:"relative",//默认相对定位
         left:'0',//默认0
@@ -139,7 +138,20 @@ var advertiseSpace=(function(){
              //创建第一个a里面的text
             if(thisAdvertiseSpaceConfig[i].advertiseList[0].text){
              var firsttext=document.createElement("span");
-             firsttext.setAttribute("style","text-align:left;width:100%;color:#000;overflow:hidden;text-overflow: ellipsis;display: -webkit-box;-webkit-line-clamp:"+this.UI.textLine+";-webkit-box-orient: vertical; z-index:"+this.UI.zindex+";font-size:"+this.UI.fontSize+";color:"+this.UI.color);
+             var firsttextwidth="100%";
+             var firsttextmargin="1px";
+              if(thisAdvertiseSpaceConfig[i].advertiseList[0].img.length==1){
+                firsttextwidth="100%";
+                firsttextmargin="3px 0";
+              }else  if(thisAdvertiseSpaceConfig[i].advertiseList[0].img.length==2){
+              firsttextwidth="98%";
+              firsttextmargin="3px 4px";
+              }else  if(thisAdvertiseSpaceConfig[i].advertiseList[0].img.length==3){
+              firsttextwidth="97%";
+              firsttextmargin="3px 6px";
+              }
+
+             firsttext.setAttribute("style","margin:"+firsttextmargin+";text-align:left;width:"+firsttextwidth+";color:#000;overflow:hidden;text-overflow: ellipsis;display: -webkit-box;-webkit-line-clamp:"+this.UI.textLine+";-webkit-box-orient: vertical; z-index:"+this.UI.zindex+";font-size:"+this.UI.fontSize+";color:"+this.UI.color);
              firsttext.innerHTML=thisAdvertiseSpaceConfig[i].advertiseList[0].text;
              firsta.appendChild(firsttext);
             }
@@ -194,10 +206,10 @@ var advertiseSpace=(function(){
              firsta.setAttribute("href",thisAdvertiseSpaceConfig[i].advertiseList[0].link);
              firsta.setAttribute("target",'view_window');
              firsta.setAttribute("id",'aopen');
-             firsta.setAttribute("style","text-align:center;text-decoration:none !important;display:block;border-bottom:1px solid #ccc;width:100%;height:"+firstaHeight+";padding:"+this.UI.padding);
+             firsta.setAttribute("style","text-align:center;text-decoration:none !important;display:block;width:100%;height:"+firstaHeight+";padding:"+this.UI.padding);
 
             //div 属性 
-             thisDiv.setAttribute("style","z-index:"+this.UI.zindex+";background-color:"+this.UI.backgroundColor+";position:"+this.UI.position+";left:"+this.UI.left+";top:"+this.UI.top+";bottom:"+this.UI.bottom+";height:"+divHeight+";width:"+this.UI.width+";margin:"+this.UI.margin);
+             thisDiv.setAttribute("style","z-index:"+this.UI.zindex+";border-bottom:1px solid #ececec;background-color:"+this.UI.backgroundColor+";position:"+this.UI.position+";left:"+this.UI.left+";top:"+this.UI.top+";bottom:"+this.UI.bottom+";height:"+divHeight+";width:"+this.UI.width+";margin:"+this.UI.margin);
              thisDiv.setAttribute('id',"ui");
             
              //把a导入div,把div导入body
@@ -257,7 +269,7 @@ var advertiseSpace=(function(){
 
             //创建div
              var thisDiv=document.createElement("div");
-             thisDiv.setAttribute("style","border-bottom:1px solid #ccc;background-color:"+this.UI.backgroundColor+";position:"+this.UI.position+";left:"+this.UI.left+";top:"+this.UI.top+";height:"+this.UI.height+";width:"+this.UI.width+";margin:"+this.UI.margin+";z-index:"+this.UI.zindex+";margin-bottom:0px;");
+             thisDiv.setAttribute("style","border-bottom:1px solid #ececec;background-color:"+this.UI.backgroundColor+";position:"+this.UI.position+";left:"+this.UI.left+";top:"+this.UI.top+";height:"+this.UI.height+";width:"+this.UI.width+";margin:"+this.UI.margin+";z-index:"+this.UI.zindex+";margin-bottom:0px;");
              thisDiv.setAttribute('id',"ui");
              
                
@@ -296,7 +308,7 @@ var advertiseSpace=(function(){
                       
                       if(thisAdvertiseSpaceConfig[i].advertiseList[k].text){
                      var firsttext=document.createElement("span");
-                     firsttext.setAttribute("style","overflow:hidden;text-overflow: ellipsis;display: -webkit-box;-webkit-line-clamp:2;-webkit-box-orient: vertical; text-align:center;width:100%;height:15%;color:#000;z-index:"+this.UI.zindex+";font-size:"+this.UI.fontSize+";color:"+this.UI.color);
+                     firsttext.setAttribute("style","height:24px;overflow:hidden;text-overflow: ellipsis;display: -webkit-box;-webkit-line-clamp:2;-webkit-box-orient: vertical; text-align:center;width:100%;height:15%;color:#000;z-index:"+this.UI.zindex+";font-size:"+this.UI.fontSize+";color:"+this.UI.color);
                      firsttext.innerHTML=thisAdvertiseSpaceConfig[i].advertiseList[k].text;
                      firsta.appendChild(firsttext);
                       }
