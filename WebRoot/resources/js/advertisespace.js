@@ -1,5 +1,6 @@
 ;(function(window){
 document.querySelector('html body').style.cssText="margin:0;padding:0;-webkit-overflow-scrolling:touch;overflow:auto;";
+var urlhost="http://advertiseserver.yayao8.com";
 var advertiseSpace=(function(){
 /**
 **对象初始化
@@ -20,6 +21,8 @@ var advertiseSpace=(function(){
         margin:'0',//默认为0
         padding:'0',//默认为0
         textLine:2,//文字行数
+        borderBottom:'0 solid #ececec',//下划线
+        display:'block',
         zindex:'1001'//深度
        };
      
@@ -82,7 +85,74 @@ var advertiseSpace=(function(){
    // _this.advertiseSpaceConfig.location='底部';
     //_this.advertiseSpaceConfig.type="悬浮";
   // _this.advertiseSpaceConfig.type="内嵌";
-   
+          //获取广告位
+          myAjax({
+                 url: urlhost+"/advertiseSpace/"+advertise_space_id,     //请求地址
+                 type: "GET",
+                 async:false,                       //请求方式
+                 dataType: "json",
+                 success: function (response, xml) {
+                     // 此处放成功后执行的代码
+                  // _this.UI.imgUrl="http://dadi.c0563.com/MMUUAA/3536/0e2f79263a938ab70b62514bf7df487a";
+                    _this.advertiseSpaceConfig[0].advertise_space_id=JSON.parse(response).advertise_space_id;
+                    _this.advertiseSpaceConfig[0].name=JSON.parse(response).name;
+                    _this.advertiseSpaceConfig[0].platform=JSON.parse(response).platform;
+                    _this.advertiseSpaceConfig[0].type=JSON.parse(response).type;
+                    _this.advertiseSpaceConfig[0].location=JSON.parse(response).location;
+                    _this.advertiseSpaceConfig[0].status=JSON.parse(response).status;
+                    _this.advertiseSpaceConfig[0].admin_id=JSON.parse(response).admin_id;
+                    if(_this.advertiseSpaceConfig[0].type=="内嵌"){
+                    	_this.advertiseSpaceConfig[0].close=false;
+                    }
+                    if(_this.advertiseSpaceConfig[0].type=="悬浮"){
+                    	_this.advertiseSpaceConfig[0].close=true;
+                    }
+                     console.log(JSON.parse(response))
+                 },
+                 fail: function (status) {
+                     // 此处放失败后执行的代码
+                 }
+             });
+          //获取广告
+          myAjax({
+        	  url: urlhost+"/advertise/advertiseSpaceShowAdvertise",     //请求地址
+        	  type: "GET",
+        	  async:false,  
+        	  data:{
+        		  advertiseSpaceId:_this.advertiseSpaceConfig[0].advertise_space_id
+        	  },
+        	  dataType: "json",
+        	  success: function (response, xml) {
+        		  // 此处放成功后执行的代码
+        		  // _this.UI.imgUrl="http://dadi.c0563.com/MMUUAA/3536/0e2f79263a938ab70b62514bf7df487a";
+        		  if(!response){
+        			  _this.advertiseSpaceConfig[0]=[];
+        			 
+        			  throw "暂无广告！";
+        		  }
+        		 // console.log(response)
+        		  _this.advertiseSpaceConfig[0].advertiseList[0].advertise_id=JSON.parse(response).advertise_id;
+        		  _this.advertiseSpaceConfig[0].advertiseList[0].name=JSON.parse(response).name;
+        		  _this.advertiseSpaceConfig[0].advertiseList[0].type=JSON.parse(response).type;
+        		  _this.advertiseSpaceConfig[0].advertiseList[0].subtype=JSON.parse(response).subtype;
+        		  _this.advertiseSpaceConfig[0].advertiseList[0].text="";
+        		  if(_this.advertiseSpaceConfig[0].platform=="移动端"){
+        		  _this.advertiseSpaceConfig[0].advertiseList[0].img=[JSON.parse(response).img];
+        		  }else if(_this.advertiseSpaceConfig[0].platform=="PC端"){
+        			  _this.advertiseSpaceConfig[0].advertiseList[0].img=[JSON.parse(response).img];
+        		  }
+        		  _this.advertiseSpaceConfig[0].advertiseList[0].link=JSON.parse(response).link;
+        		  _this.advertiseSpaceConfig[0].advertiseList[0].link=JSON.parse(response).link;
+        		  _this.advertiseSpaceConfig[0].advertiseList[0].status=JSON.parse(response).status;
+        		  _this.advertiseSpaceConfig[0].advertiseList[0].start_delivery_date=JSON.parse(response).start_delivery_date;
+        		  _this.advertiseSpaceConfig[0].advertiseList[0].end_delivery_date=JSON.parse(response).end_delivery_date;
+        		  _this.advertiseSpaceConfig[0].advertiseList[0].admin_id=JSON.parse(response).admin_id;
+        		  console.log(JSON.parse(response))
+        	  },
+        	  fail: function (status) {
+        		  // 此处放失败后执行的代码
+        	  }
+          });
      return _this.advertiseSpaceConfig;
         },
 /**
@@ -130,7 +200,7 @@ var advertiseSpace=(function(){
 
             //创建文字与图片高度
             var divHeight="auto";//div高度
-            var firstaHeight='auto';//外包裹a高度
+            var firstaHeight='100%';//外包裹a高度
             var imgHeight='200px';//图片高度
             var thisDiv=document.createElement("div");//创建div
             var firsta=document.createElement("a");//创建第一个a
@@ -210,7 +280,7 @@ var advertiseSpace=(function(){
              firsta.setAttribute("style","text-align:center;text-decoration:none !important;display:block;width:100%;height:"+firstaHeight+";padding:"+this.UI.padding);
 
             //div 属性 
-             thisDiv.setAttribute("style","z-index:"+this.UI.zindex+";border-bottom:1px solid #ececec;background-color:"+this.UI.backgroundColor+";position:"+this.UI.position+";left:"+this.UI.left+";top:"+this.UI.top+";bottom:"+this.UI.bottom+";height:"+divHeight+";width:"+this.UI.width+";margin:"+this.UI.margin);
+             thisDiv.setAttribute("style","display:"+this.UI.display+";z-index:"+this.UI.zindex+";border-bottom:"+this.UI.borderBottom+";background-color:"+this.UI.backgroundColor+";position:"+this.UI.position+";left:"+this.UI.left+";top:"+this.UI.top+";bottom:"+this.UI.bottom+";height:"+divHeight+";width:"+this.UI.width+";margin:"+this.UI.margin);
              thisDiv.setAttribute('id',"ui");
             
              //把a导入div,把div导入body
@@ -233,12 +303,13 @@ var advertiseSpace=(function(){
       //PC端
       else if(thisAdvertiseSpaceConfig[i].platform=="PC端"){
         //pc端初始化
-        this.UI.width='960px';
-        this.UI.height='150px';
+        this.UI.width='320px';
+        this.UI.height='300px';
         this.UI.left='0';
         this.UI.top='0';
         this.UI.margin='auto';
         this.UI.padding='10px';
+        this.UI.display="inline-block";
          var location;
           if(thisAdvertiseSpaceConfig[i].type=='内嵌'){
             this.UI.zindex='9999';
@@ -270,18 +341,19 @@ var advertiseSpace=(function(){
 
             //创建div
              var thisDiv=document.createElement("div");
-             thisDiv.setAttribute("style","border-bottom:1px solid #ececec;background-color:"+this.UI.backgroundColor+";position:"+this.UI.position+";left:"+this.UI.left+";top:"+this.UI.top+";height:"+this.UI.height+";width:"+this.UI.width+";margin:"+this.UI.margin+";z-index:"+this.UI.zindex+";margin-bottom:0px;");
+             thisDiv.setAttribute("style","display:"+this.UI.display+";border-bottom:"+this.UI.borderBottom+";background-color:"+this.UI.backgroundColor+";position:"+this.UI.position+";left:"+this.UI.left+";top:"+this.UI.top+";height:"+this.UI.height+";width:"+this.UI.width+";margin:"+this.UI.margin+";z-index:"+this.UI.zindex+";margin-bottom:0px;");
              thisDiv.setAttribute('id',"ui");
              
                
 
               for(var k=0;k<thisAdvertiseSpaceConfig[i].advertiseList.length;k++){                 
                 if(thisAdvertiseSpaceConfig[i].advertiseList.length<=3){
-                        var width="";
-                        var height="80%";
+                        var width="100%";
+                        var height="100%";
                         if(thisAdvertiseSpaceConfig[i].advertiseList.length==1){
-                            width="960px";
-                            height="360px";
+                           // width="960px";
+                        	width="100%";
+                            //height="360px";
                              if(thisAdvertiseSpaceConfig[i].type=='悬浮'){
                               width="100%";
                               height=(245-parseInt(this.UI.padding.slice(0,-2))*2)+'px';
@@ -289,12 +361,14 @@ var advertiseSpace=(function(){
                              }
                         }
                          if(thisAdvertiseSpaceConfig[i].advertiseList.length==2){
-                           width="480px";
-                           height="180px";
+                           //width="480px";
+                           width="50%";
+                           //height="180px";
                          }
                           if(thisAdvertiseSpaceConfig[i].advertiseList.length==3){
-                           width="320px";
-                           height="120px";
+                          // width="320px";
+                           width="33.33%";
+                           //height="120px";
                          }
                         //有图片
                       if(thisAdvertiseSpaceConfig[i].advertiseList[k].img && thisAdvertiseSpaceConfig[i].advertiseList[k].img.length>0){
@@ -368,10 +442,10 @@ var advertiseSpace=(function(){
       } 
 
              //监听第二个a的事件，删除整个div
-            // var _this=this;
+             var _this=this;
           var acloseAll = document.querySelectorAll("#ui #aclose");
-            for( var j = 0 ;j<acloseAll.length;j++ ){
-             acloseAll[j].addEventListener('click',function(){
+            for( var alcose = 0 ;alcose<acloseAll.length;alcose++ ){
+             acloseAll[alcose].addEventListener('click',function(){
                      this.parentNode.remove();
               },false);
              }
@@ -381,17 +455,51 @@ var advertiseSpace=(function(){
              var aopenAll = document.querySelectorAll("#ui #aopen");
              var aopenAllBackgroundColor;//背景颜色
              var aopenTapHighlightColor;//tap颜色
-            for( var j = 0 ;j<aopenAll.length;j++ ){   
-             aopenAll[j].addEventListener('mouseover',function(){
+            for( var aopen = 0 ;aopen<aopenAll.length;aopen++ ){   
+             aopenAll[aopen].addEventListener('mouseover',function(){
                     // this.parentNode.remove();                
                     aopenAllBackgroundColor=this.style.backgroundColor;
                     this.style.backgroundColor='#f1eff0';
               },false);
-
-             aopenAll[j].addEventListener('mouseout',function(){
+             
+             aopenAll[aopen].addEventListener('mouseout',function(){
                     // this.parentNode.remove();
                     this.style.backgroundColor=aopenAllBackgroundColor;
               },false);
+             
+             aopenAll[aopen].addEventListener('click',function(){
+            	 var advertiseUv=0;//默认广告不是独立访客
+            	 var advertiseSpaceUv=0;//默认广告位不是独立访客
+            	 //只有不存在，才是新访客
+            	if(!getCookie("advertiseUv"+_this.advertiseSpaceConfig[0].advertiseList[0].advertise_id)){
+            		setCookie("advertiseUv"+_this.advertiseSpaceConfig[0].advertiseList[0].advertise_id, _this.advertiseSpaceConfig[0].advertiseList[0].advertise_id, currentToEndTime());
+            		advertiseUv=1;
+            	} 
+            	if(!getCookie("advertiseSpaceUv"+_this.advertiseSpaceConfig[0].advertise_space_id)){
+            		setCookie("advertiseSpaceUv"+_this.advertiseSpaceConfig[0].advertise_space_id, _this.advertiseSpaceConfig[0].advertise_space_id, currentToEndTime());
+            		advertiseSpaceUv=1;
+            	} 
+               myAjax({
+                  url: urlhost+"/advertise/click",     //请求地址
+                  type: "POST",                       //请求方式
+                  data: {
+                    advertiseId:_this.advertiseSpaceConfig[0].advertiseList[0].advertise_id,
+                    advertiseSpaceId:_this.advertiseSpaceConfig[0].advertise_space_id,
+                    advertiseUv:advertiseUv,
+                    advertiseSpaceUv:advertiseSpaceUv
+                    },        //请求参数
+                  dataType: "json",
+                  success: function (response, xml) {
+                      // 此处放成功后执行的代码
+                      console.log(JSON.parse(response))
+                     
+                     // console.log(xml)
+                  },
+                  fail: function (status) {
+                      // 此处放失败后执行的代码
+                  }
+              });
+             },false);
              }
             }//prototype end
 
@@ -584,8 +692,8 @@ window.onscroll = function(){
 };
 
 //对象调用
-//var oldAdvertiseSpace=new advertiseSpace();
-//oldAdvertiseSpace.getAdvertiseSpaceDiv();
-  window.advertiseSpace= advertiseSpace;
+var oldAdvertiseSpace=new advertiseSpace();
+oldAdvertiseSpace.getAdvertiseSpaceDiv();
+  //window.advertiseSpace= advertiseSpace;
 
 })(window);

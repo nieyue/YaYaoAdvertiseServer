@@ -2,6 +2,7 @@ package com.nieyue.controller;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -151,9 +152,8 @@ public class AdvertiseController {
 			return StateResult.getFail();
 		}
 		//广告消耗完或者时间到结算
-		if(!daoadvertise.getNowUnitDeliveryNumber().equals(0) 
-				&& (daoadvertise.getNowUnitDeliveryNumber()>=daoadvertise.getUnitDeliveryNumber()
-				||daoadvertise.getEndDeliveryDate().before(new Date()))){
+		if(daoadvertise.getEndDeliveryDate().before(new Date())||
+				(!daoadvertise.getNowUnitDeliveryNumber().equals(0) && (daoadvertise.getNowUnitDeliveryNumber()>=daoadvertise.getUnitDeliveryNumber()))){
 			daoadvertise.setStatus("已结束");
 			advertiseService.updateAdvertise(daoadvertise);
 			return StateResult.getFail();
@@ -386,20 +386,21 @@ public class AdvertiseController {
 	@RequestMapping(value = "/advertiseSpaceShowAdvertise", method = {RequestMethod.GET,RequestMethod.POST})
 	public @ResponseBody Advertise advertiseSpaceShowAdvertise(@RequestParam("advertiseSpaceId") Integer advertiseSpaceId,HttpSession session)  {
 		AdvertiseSpace advertiseSpace = advertiseSpaceService.loadAdvertiseSpace(advertiseSpaceId);
+		String platform = advertiseSpace.getPlatform();
 		Advertise advertise=new Advertise();
-		 advertise = advertiseService.browsePagingAdvertiseSpaceShowAdvertise(advertiseSpace.getUnitPrice()+0.1,"投放中");
+		 advertise = advertiseService.browsePagingAdvertiseSpaceShowAdvertise(new Double(new DecimalFormat("0.00").format(advertiseSpace.getUnitPrice()+0.1)),"投放中",platform);
 		int timer=1;
 		List<Advertise> list=new ArrayList<Advertise>();
 		while (true) {
 		if(advertise==null||advertise.equals("")){
-				advertise = advertiseService.browsePagingAdvertiseSpaceShowAdvertise(advertiseSpace.getUnitPrice()+0.1,"投放中");
+				advertise = advertiseService.browsePagingAdvertiseSpaceShowAdvertise(new Double(new DecimalFormat("0.00").format(advertiseSpace.getUnitPrice()+0.1)),"投放中",platform);
 		}else{
 			break;
 		}
 		timer++;
 		//防止无限循环
 		if(timer==10){
-			list = advertiseService.browsePagingAdvertiseSpaceShowAdvertiseBei(advertiseSpace.getUnitPrice()+0.1,"投放中");
+			list = advertiseService.browsePagingAdvertiseSpaceShowAdvertiseBei(new Double(new DecimalFormat("0.00").format(advertiseSpace.getUnitPrice()+0.1)),"投放中",platform);
 			if(list.size()>0){				
 			advertise=list.get(new Random().nextInt(list.size()));
 			}

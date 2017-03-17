@@ -24,7 +24,6 @@
    		 status,
    		 create_date,
    		 last_login_date,
-   		 parent_id,
    		 role_id)
    VALUES
     	 (#{name},
@@ -44,7 +43,6 @@
     	 #{status},
     	 #{createDate},
     	 #{lastLoginDate},
-    	 #{parentId},
     	 #{roleId})  
 </insert>  
 <!-- 更新管理员 -->
@@ -69,7 +67,6 @@
     	status=#{status},
     	create_date=#{createDate},
     	last_login_date=#{lastLoginDate},
-    	parent_id=#{parentId},
     	role_id=#{roleId}
     WHERE
     	 admin_id=#{adminId} 
@@ -101,7 +98,6 @@ SELECT
    		 status,
    		 create_date,
    		 last_login_date,
-   		 parent_id,
    		 role_id
 FROM admin_tb 
 WHERE admin_id=#{adminId}
@@ -127,7 +123,6 @@ SELECT
    		 status,
    		 create_date,
    		 last_login_date,
-   		 parent_id,
    		 role_id
 FROM admin_tb 
 WHERE 
@@ -177,7 +172,6 @@ AND password=#{password}
    		 status,
    		 create_date,
    		 last_login_date,
-   		 parent_id,
    		 role_id
 	FROM admin_tb
 	ORDER BY
@@ -206,7 +200,6 @@ AND password=#{password}
    		 status,
    		 create_date,
    		 last_login_date,
-   		 parent_id,
    		 role_id
 	FROM admin_tb
 	WHERE role_id=#{roleId}
@@ -236,7 +229,6 @@ AND password=#{password}
    		 status,
    		 create_date,
    		 last_login_date,
-   		 parent_id,
    		 role_id
 	FROM admin_tb
 	ORDER BY

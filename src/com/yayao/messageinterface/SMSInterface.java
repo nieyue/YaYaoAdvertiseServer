@@ -90,7 +90,7 @@ public class SMSInterface {
 //    
     
     public static void main(String[] args) throws ApiException {
-    	System.out.println(SmsNumSend(String.valueOf((int)Math.random()*9000+1000),"15111336587","雅耀","SMS_13026946"));
+    	System.out.println(SmsNumSend(String.valueOf((int)Math.random()*9000+1000),"15111336587","注册验证","SMS_13026946"));
     	
     	//System.out.println(SmsNumQuery("15111336587"));
     	//SmsNumTotal();

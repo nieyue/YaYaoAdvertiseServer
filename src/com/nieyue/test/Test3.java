@@ -1,5 +1,6 @@
 package com.nieyue.test;
 
+import java.text.DecimalFormat;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -24,5 +25,7 @@ public class Test3 {
 		for (String s : set) {
 			System.out.println(s);
 		}
+		System.out.println(new DecimalFormat("#.##").format(23233.1415926));
+		System.out.println(new Double(new DecimalFormat("0.00").format(new Double(2323.2)+0.1)));
 	}
 }

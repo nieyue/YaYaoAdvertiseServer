@@ -117,6 +117,7 @@ FROM advertise_tb as a1
 JOIN (SELECT ROUND(RAND() * ((SELECT MAX(advertise_id) FROM advertise_tb)-(SELECT MIN(advertise_id) FROM advertise_tb))+(SELECT MIN(advertise_id) FROM advertise_tb)) AS aid) AS a2
 WHERE unit_price>=#{unitPrice} 
 AND status=#{status}
+AND type=#{type}
 AND a1.advertise_id = a2.aid
 </select>
 <!-- 根据金额随机一条广告 备胎-->
@@ -142,6 +143,7 @@ SELECT
 FROM advertise_tb 
 WHERE unit_price>=#{unitPrice} 
 AND status=#{status}
+AND type=#{type}
 </select>
 
 <!-- 分页查询广告-->

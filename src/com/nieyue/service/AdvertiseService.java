@@ -25,9 +25,9 @@ public interface AdvertiseService {
 	/** 分页广告 */
 	public List<Advertise> browsePagingAdvertise(int pageNum,int pageSize,String orderName,String orderWay) ;
 	/** 根据金额随机一条广告 */
-	public Advertise browsePagingAdvertiseSpaceShowAdvertise(Double unitPrice,String status) ;
+	public Advertise browsePagingAdvertiseSpaceShowAdvertise(Double unitPrice,String status,String type) ;
 	/** 根据金额随机一条广告 备胎 */
-	public List<Advertise> browsePagingAdvertiseSpaceShowAdvertiseBei(Double unitPrice,String status) ;
+	public List<Advertise> browsePagingAdvertiseSpaceShowAdvertiseBei(Double unitPrice,String status,String type) ;
 	/** 根据管理员分页广告 */
 	public List<Advertise> browsePagingAdvertiseByAdminId(Integer adminId,int pageNum,int pageSize,String orderName,String orderWay) ;		
 }

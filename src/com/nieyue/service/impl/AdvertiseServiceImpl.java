@@ -82,15 +82,15 @@ public class AdvertiseServiceImpl implements AdvertiseService{
 	}
 
 	@Override
-	public Advertise browsePagingAdvertiseSpaceShowAdvertise(Double unitPrice,String status) {
-		Advertise a = advertiseDao.browsePagingAdvertiseSpaceShowAdvertise(unitPrice,status);
+	public Advertise browsePagingAdvertiseSpaceShowAdvertise(Double unitPrice,String status,String type) {
+		Advertise a = advertiseDao.browsePagingAdvertiseSpaceShowAdvertise(unitPrice,status,type);
 		return a;
 	}
 
 	@Override
 	public List<Advertise> browsePagingAdvertiseSpaceShowAdvertiseBei(
-			Double unitPrice, String status) {
-		List<Advertise> a = advertiseDao.browsePagingAdvertiseSpaceShowAdvertiseBei(unitPrice, status);
+			Double unitPrice, String status,String type) {
+		List<Advertise> a = advertiseDao.browsePagingAdvertiseSpaceShowAdvertiseBei(unitPrice, status,type);
 		return a;
 	}
 

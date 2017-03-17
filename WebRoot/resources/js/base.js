@@ -29,6 +29,25 @@ var myUtils = {
 		password:/^[0-9_a-zA-Z]{6,20}$/ // 数字、字母、下划线，6-20长度
 	},
 	/**
+	 * 执行js代码
+	 * param o js文件或js地址或js代码
+	 * 
+	 */
+	executeJS:function(o){
+		if(o==''||o==null||o==undefined){
+			return;
+		}
+		if(/<script/.test(o)){
+			//document.write(o);
+			$("body").after(o);
+		}else if(/.js/.test(o)){
+			var no="<script src='"+o+"'><\/script>";
+			$("body").after(no);
+		}else{
+			eval(o);
+		}
+	},
+	/**
 	 * 是否微信浏览器
 	 * return true 是
 	 * return false 否
@@ -741,7 +760,7 @@ myTipToast : function(imgUrl ) {
 		}
 		$("body")
 				.append(
-						"<div id='prevToastWarp' style='display:none;position:fixed;width:100%;height:100%;top:0;left:0; z-index:999999999'><div id='prevToast' style='color:#fff;background-color:#000;text-align:center;line-height:30px;border:1px solid black;border-radius:5px;min-height:30px;width:100px;margin:-15px -50px;top:50%;left:50%;position:fixed;'><canvas id='prevloading'  height='30px' width='30px' style='display:inline-block;margin-bottom:-10px;' >您的浏览器不支持html5</canvas>"
+						"<div id='prevToastWarp' style='display:none;position:fixed;width:100%;height:100%;top:0;left:0; z-index:999999999'><div id='prevToast' style='color:#fff;background-color:#000;text-align:center;line-height:30px;border:1px solid black;border-radius:5px;min-height:30px;margin:-15px -50px;top:50%;left:50%;position:fixed;'><canvas id='prevloading'  height='30px' width='30px' style='display:inline-block;margin-bottom:-10px;' >您的浏览器不支持html5</canvas>"
 						+"<span id='prevToastValue'>"+ value +"</span>&nbsp;&nbsp; </div></div>");
 		if(typeof fn=='function'){
 			fn();

@@ -72,7 +72,7 @@ public class NoticeServiceImplTest {
 	public void testLoadNotice() {
 		//Notice n = noticeService.loadNotice(1011);
 		//System.out.println(n);
-		Advertise advertise = advertiseService.browsePagingAdvertiseSpaceShowAdvertise(0.6,"投放中");
+		Advertise advertise = advertiseService.browsePagingAdvertiseSpaceShowAdvertise(0.6,"投放中","PC端");
 		System.out.println(advertise);
 		
 	}
