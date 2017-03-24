@@ -34,7 +34,6 @@ public class AdminControllerSessionInterceptor implements HandlerInterceptor {
         }
         HandlerMethod handlerMethod = (HandlerMethod) handler;
         Method method = handlerMethod.getMethod();
-        
         //自定义token
 //        if(method.getName().equals("loginAdmin")||method.getName().equals("isloginAdmin")||method.getName().equals("tokenAdmin")){
 //        	return true;
@@ -42,6 +41,9 @@ public class AdminControllerSessionInterceptor implements HandlerInterceptor {
 //        	//验证token成功
 //            return true;
 //        }
+        if(request.getRequestURI().indexOf("api")>-1){
+        	return true;
+        }
         if(method.getName().equals("loginAdmin")
         ||method.getName().equals("isloginAdmin")
         ||method.getName().equals("tokenAdmin")

@@ -23,6 +23,10 @@ public class Advertise implements Serializable{
 	 */
 	private String name;
 	/**
+	 * 计费方式
+	 */
+	private String billingMode;
+	/**
 	 * 类型
 	 */
 	private String type;
@@ -30,6 +34,10 @@ public class Advertise implements Serializable{
 	 * 子类型
 	 */
 	private String subtype;
+	/**
+	 * 标题
+	 */
+	private String title;
 	/**
 	 * 广告图片
 	 */
@@ -87,7 +95,7 @@ public class Advertise implements Serializable{
 
 
 	public Advertise(Integer advertiseId, String name, String type,
-			String subtype, String img, String link, Double unitPrice,
+			String subtype,String billingMode,String title, String img, String link, Double unitPrice,
 			Integer unitDeliveryNumber, Integer nowUnitDeliveryNumber,
 			Double unitMoney, Double nowUnitMoney, String status,
 			Date startDeliveryDate, Date endDeliveryDate, Date updateDate,
@@ -95,8 +103,10 @@ public class Advertise implements Serializable{
 		super();
 		this.advertiseId = advertiseId;
 		this.name = name;
+		this.billingMode=billingMode;
 		this.type = type;
 		this.subtype = subtype;
+		this.title=title;
 		this.img = img;
 		this.link = link;
 		this.unitPrice = unitPrice;
@@ -272,6 +282,26 @@ public class Advertise implements Serializable{
 
 	public void setNowUnitMoney(Double nowUnitMoney) {
 		this.nowUnitMoney = nowUnitMoney;
+	}
+
+
+	public String getTitle() {
+		return title;
+	}
+
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
+
+
+	public String getBillingMode() {
+		return billingMode;
+	}
+
+
+	public void setBillingMode(String billingMode) {
+		this.billingMode = billingMode;
 	}
 
 

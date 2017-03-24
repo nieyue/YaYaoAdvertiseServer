@@ -9,8 +9,10 @@
    		  advertise_tb 
    		 (
    		 name,
+   		 billing_mode,
    		 type,
    		 subtype,
+   		 title,
    		 img,
    		 link,
    		 unit_price,
@@ -26,8 +28,10 @@
    VALUES
     	 (
     	 #{name},
+    	 #{billingMode},
     	 #{type},
     	 #{subtype},
+    	 #{title},
     	 #{img},
     	 #{link},
     	 #{unitPrice},
@@ -48,8 +52,10 @@
     	advertise_tb 
     SET 
     	name=#{name},
+    	billing_mode=#{billingMode},
     	type=#{type},
     	subtype=#{subtype},
+    	title=#{title},
     	img=#{img},
     	link=#{link},
     	unit_price=#{unitPrice},
@@ -75,9 +81,11 @@
 <select id="loadAdvertise" parameterType="Integer" resultType="Advertise" >
 SELECT 
 		 advertise_id,
+		 billing_mode,
 	 	 name,
    		 type,
    		 subtype,
+   		 title,
    		 img,
    		 link,
    		 unit_price,
@@ -99,8 +107,10 @@ WHERE advertise_id=#{advertiseId}
 SELECT 
 		 advertise_id,
 	 	 name,
+	 	 billing_mode,
    		 type,
    		 subtype,
+   		 title,
    		 img,
    		 link,
    		 unit_price,
@@ -116,6 +126,7 @@ SELECT
 FROM advertise_tb as a1 
 JOIN (SELECT ROUND(RAND() * ((SELECT MAX(advertise_id) FROM advertise_tb)-(SELECT MIN(advertise_id) FROM advertise_tb))+(SELECT MIN(advertise_id) FROM advertise_tb)) AS aid) AS a2
 WHERE unit_price>=#{unitPrice} 
+AND billing_mode=#{billingMode}
 AND status=#{status}
 AND type=#{type}
 AND a1.advertise_id = a2.aid
@@ -126,8 +137,10 @@ AND a1.advertise_id = a2.aid
 SELECT 
 		 advertise_id,
 	 	 name,
+	 	 billing_mode,
    		 type,
    		 subtype,
+   		 title,
    		 img,
    		 link,
    		 unit_price,
@@ -141,6 +154,7 @@ SELECT
    		 update_date,
    		 admin_id
 FROM advertise_tb 
+AND billing_mode=#{billingMode}
 WHERE unit_price>=#{unitPrice} 
 AND status=#{status}
 AND type=#{type}
@@ -151,8 +165,10 @@ AND type=#{type}
     SELECT
 	     advertise_id,
 	 	 name,
+	 	 billing_mode,
    		 type,
    		 subtype,
+   		 title,
    		 img,
    		 link,
    		 unit_price,
@@ -176,8 +192,10 @@ AND type=#{type}
     SELECT
 	     advertise_id,
 	 	 name,
+	 	 billing_mode,
    		 type,
    		 subtype,
+   		 title,
    		 img,
    		 link,
    		 unit_price,
@@ -211,6 +229,4 @@ AND type=#{type}
 	FROM advertise_tb
 	WHERE admin_id=#{adminId}
 </select>   
-   
- 
 </mapper>

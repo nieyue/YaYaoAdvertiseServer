@@ -12,6 +12,9 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.nieyue.util.Configure;
+import com.nieyue.util.MyOriginUtil;
+
 
 /**
  * 过滤请求实现rest风格
@@ -33,12 +36,7 @@ public class JspFilter implements Filter{
 		 // 获得在下面代码中要用的request,response
         HttpServletRequest servletRequest = (HttpServletRequest) request;
         HttpServletResponse servletResponse = (HttpServletResponse) response;
-        //实现跨域
-        servletResponse.setHeader("Access-Control-Allow-Credentials", "true");
-        servletResponse.setHeader("Access-Control-Allow-Origin", servletRequest.getHeader("Origin"));
-        servletResponse.setHeader("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE");
-        servletResponse.setHeader("Access-Control-Max-Age", "3600");
-        servletResponse.setHeader("Access-Control-Allow-Headers", "x-requested-with");
+        servletResponse=MyOriginUtil.getOriginPugin(servletRequest, servletResponse);//origin配置
         //chain.doFilter(request, response);
         // 获得用户请求的http://localhost:8080/YaYaoMall/mall/mobile/index
         // 获得用户请求的http://localhost:8080/mall/mobile/indexp

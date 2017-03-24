@@ -83,8 +83,10 @@ PRIMARY KEY (notice_id)
 CREATE TABLE advertise_tb(
 advertise_id int(11) NOT NULL AUTO_INCREMENT COMMENT '广告id',
 name varchar(255) COMMENT '名称',
+billing_mode varchar(255) COMMENT '计费模式',
 type varchar(255) COMMENT '类型',
 subtype varchar(255) COMMENT '子类型',
+title varchar(255) COMMENT '标题',
 img varchar(255) COMMENT '广告图片',
 link varchar(255) COMMENT '链接地址',
 unit_price decimal(11,2) COMMENT '单价',

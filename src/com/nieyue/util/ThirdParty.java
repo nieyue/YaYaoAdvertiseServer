@@ -1,6 +1,10 @@
 package com.nieyue.util;
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Locale;
+import java.util.Properties;
 import java.util.ResourceBundle;
 
 /**
@@ -16,15 +20,18 @@ public class ThirdParty {
 	 * @return
 	 */
 	public static String GetValueByKey(String key){
-		 Locale locale = Locale.getDefault();  
-         ResourceBundle localResource = ResourceBundle.getBundle("config/thirdParty", locale);
-         try {
-        	 String value = localResource.getString(key); 
-        	 return value;
-			
-		} catch (Exception e) {
-			return null;
-		}
+         Properties prop = new Properties();  
+ 		String path = Configure.class.getClassLoader().getResource("config/thirdParty.properties").getPath();  
+ 		InputStream is;
+ 		try {
+ 			is = new FileInputStream(path);
+ 				prop.load(is);
+ 		} catch (IOException e) {
+ 			// TODO Auto-generated catch block
+ 			return null;
+ 		}  
+ 		String value = (String) prop.get(key);
+ 		return value;
 	}
 	public static void main(String[] args) {
 		System.out.println(ThirdParty.GetValueByKey("ALIBABA_SMS_TEMPLATE_CODE_ID"));

@@ -5,8 +5,8 @@ import java.util.Date;
 
 /**
  * 管理员类
- * @author yy
- *
+ * @author 聂跃
+ * @date 2017年3月21日
  */
 public class Admin implements Serializable{
 	/**

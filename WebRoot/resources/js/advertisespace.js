@@ -1,6 +1,7 @@
 ;(function(window){
 document.querySelector('html body').style.cssText="margin:0;padding:0;-webkit-overflow-scrolling:touch;overflow:auto;";
-var urlhost="http://advertiseserver.yayao8.com";
+//var urlhost="http://advertiseserver.yayao8.com";
+var urlhost="http://localhost";
 var advertiseSpace=(function(){
 /**
 **对象初始化
@@ -136,6 +137,9 @@ var advertiseSpace=(function(){
         		  _this.advertiseSpaceConfig[0].advertiseList[0].type=JSON.parse(response).type;
         		  _this.advertiseSpaceConfig[0].advertiseList[0].subtype=JSON.parse(response).subtype;
         		  _this.advertiseSpaceConfig[0].advertiseList[0].text="";
+        		  if(JSON.parse(response).title){
+        			  _this.advertiseSpaceConfig[0].advertiseList[0].text=JSON.parse(response).title;
+        		  }
         		  if(_this.advertiseSpaceConfig[0].platform=="移动端"){
         		  _this.advertiseSpaceConfig[0].advertiseList[0].img=[JSON.parse(response).img];
         		  }else if(_this.advertiseSpaceConfig[0].platform=="PC端"){
@@ -175,7 +179,7 @@ var advertiseSpace=(function(){
             this.UI.position='relative';
             this.UI.zindex='9999'; 
             this.UI.width=oldWidth;  
-            this.UI.padding="10px 0px";
+            this.UI.padding="5px 0px";
           }
 
           if(thisAdvertiseSpaceConfig[i].type=='悬浮'){
@@ -200,7 +204,7 @@ var advertiseSpace=(function(){
 
             //创建文字与图片高度
             var divHeight="auto";//div高度
-            var firstaHeight='100%';//外包裹a高度
+            var firstaHeight='auto';//外包裹a高度
             var imgHeight='200px';//图片高度
             var thisDiv=document.createElement("div");//创建div
             var firsta=document.createElement("a");//创建第一个a
@@ -234,12 +238,11 @@ var advertiseSpace=(function(){
                if(thisAdvertiseSpaceConfig[i].type=='悬浮'){
                 //imgHeight="100px";
                 imgHeight="31.25%";//宽高比16:5
-                var oneImgMargin="0px 0px -5px 0px";
 
               }
 
               var firstimg=document.createElement("img");
-              firstimg.setAttribute("style","margin:"+oneImgMargin+";width:100%;height:"+imgHeight+";z-index:"+this.UI.zindex);
+              firstimg.setAttribute("style","vertical-align:middle;width:100%;height:"+imgHeight+";z-index:"+this.UI.zindex);
               firstimg.setAttribute("src",thisAdvertiseSpaceConfig[i].advertiseList[0].img[0]);
               firsta.appendChild(firstimg);
               }else if(thisAdvertiseSpaceConfig[i].advertiseList[0].img.length==2){
@@ -308,7 +311,7 @@ var advertiseSpace=(function(){
         this.UI.left='0';
         this.UI.top='0';
         this.UI.margin='auto';
-        this.UI.padding='10px';
+        this.UI.padding='5px';
         this.UI.display="inline-block";
          var location;
           if(thisAdvertiseSpaceConfig[i].type=='内嵌'){
@@ -356,7 +359,7 @@ var advertiseSpace=(function(){
                             //height="360px";
                              if(thisAdvertiseSpaceConfig[i].type=='悬浮'){
                               width="100%";
-                              height=(245-parseInt(this.UI.padding.slice(0,-2))*2)+'px';
+                              height=(248-parseInt(this.UI.padding.slice(0,-2))*2)+'px';
                               //height="225px";
                              }
                         }
