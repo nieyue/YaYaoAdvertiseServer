@@ -508,8 +508,8 @@ var myUtils = {
 		//console.log(file.files)
 		  photoExt=file.value.substr(file.value.lastIndexOf(".")).toLowerCase();// 获得文件后缀名
 		// 判断照片格式
-		  if(photoExt!='.jpg'&&photoExt!='.png'){
-			  myUtils.myLoadingToast("请上传后缀名为jpg/png的照片!");
+		  if(photoExt!='.jpg'&&photoExt!='.png'&&photoExt!='.gif'){
+			  myUtils.myLoadingToast("请上传后缀名为jpg/png/gif的照片!");
 		      return false;
 		  }
 		  var fileSize = 0;
@@ -522,19 +522,39 @@ var myUtils = {
 		  }else {  
 		       fileSize = file.files[0].size;     
 		  } 
-		  fileSize=Math.round(fileSize/1024*100/1024)/100; // 单位为MB
-		  if(fileSize>=20){
-			  alert("图片大小为"+fileSize+"MB，超过最大尺寸为2MB，请重新上传!");
+		  fileSize=Math.round(fileSize/1024*100)/100; // 单位为KB
+		  if(fileSize>200){
+			  myUtils.myLoadingToast("图片大小为"+fileSize+"KB，超过最大尺寸为200KB，请重新上传!");
 		      return false;
 		  }		  
 	    	if (file.files && file.files[0])  
 	    	 {
 	         var reader = new FileReader(); 
+			 reader.readAsDataURL(file.files[0]);
 	      	reader.onload = function(e){
 	      		if(typeof options.ajaxObj!='object'){
 	      		myUtils.myLoadingToast("上传失败",null);
 	      		return;
-	      		}
+		      }
+
+				
+			if(options.proportion){//是否有宽高比
+			 var img = new Image;
+            img.src = reader.result;
+            img.onload = function () {
+                var width = img.width;
+                var height = img.height;
+               if((width/height).toFixed(2)!=(options.proportion).toFixed(2)){
+				   myUtils.myLoadingToast("图片宽高比"+(width/height).toFixed(2)+"，应为"+options.proportion);
+			   }else{
+				   myajax();	
+			   }
+
+            };
+		}else{
+		myajax();	
+		}
+				function myajax(){
 	      		myUtils.myPrevToast("上传中",function(){
 	      			var fd=new FormData();
 	      			if(typeof options.ajaxObj.formData=='object'){
@@ -566,8 +586,9 @@ var myUtils = {
 	      		if(typeof options.dragFn=='function'){
 	      			options.dragFn(e);
 	      		}
+				}
 	    	}
-	      	reader.readAsDataURL(file.files[0]);
+	      
 	      }else{
 	      	myUtils.myPrevToast("浏览器不支持",null,"add");
 	      	setTimeout(function(){
@@ -716,7 +737,7 @@ var myUtils = {
 	      	var scrollHeight = $(document).height();
 	      	var elementHeight = $(element).height();
 	      	var windowHeight = $(window).height();
-	      	if((scrollTop + windowHeight == scrollHeight)||(elementHeight<=windowHeight)){
+	      	if((scrollTop + windowHeight >= scrollHeight-20)||(elementHeight<=windowHeight)){
 	      		isscrollbottom=true;
 	      		// console.log((scrollTop + windowHeight ==
 				// scrollHeight)||(elementHeight<=windowHeight))
@@ -920,7 +941,7 @@ myTipToast : function(imgUrl ) {
 		}
 		$("body")
 		.append(
-				"<div id='myTemplateDiv' style='position:fixed;width:100%;height:100%;background-color:#ccc;opacity:0.5;left:0;top:0;'></div><div id='myTemplate' style='z-index:9999;color:#000;background-color:#fff;text-align:center;line-height:30px;border:1px solid #fff;border-radius:5px;height:300px;width:"+myTemplateWidth+"px;margin:-100px -"+myTemplateMarginWidth+"px;top:50%;left:50%;position:fixed;font-size:20px;'>"
+				"<div id='myTemplateDiv' style='position:fixed;width:100%;height:100%;background-color:#ccc;opacity:0.5;left:0;top:0;z-index:9998;'></div><div id='myTemplate' style='z-index:9999;color:#000;background-color:#fff;text-align:center;line-height:30px;border:1px solid #fff;border-radius:5px;height:300px;width:"+myTemplateWidth+"px;margin:-100px -"+myTemplateMarginWidth+"px;top:50%;left:50%;position:fixed;font-size:20px;'>"
 				+ "<div style='position:absolute;top:20px;width:100%;text-align:center;'>"+value+"</div><div class='btn btn-default' style='position:absolute;right:15px;bottom:15px;width:80px;' id='myTemplateNo'>关闭</div></div>");
 	$('#myTemplateNo').click(function(){
 		$('#myTemplateDiv').remove();
@@ -1008,67 +1029,116 @@ myTipToast : function(imgUrl ) {
 		});
 	},
 	/**
-	 * 分页组件(暂时不用)
+	 * 分页组件
 	 * @param obj
 	 */
-	myPaginationHandler:function(obj){
-		if(!obj||typeof obj!='object'){
-			return;
-		}
-		$(obj.prevElement).parent("li").removeClass("disabled");
-		$(obj.nextElement).parent("li").removeClass("disabled");
-		var pageCount=(obj.length%obj.pageSize==0)?parseInt(obj.length/obj.pageSize):parseInt((obj.length/obj.pageSize)+1);//页数=总数/每页大小+1;
-			
-		if(obj.length==0){
-		$(obj.removeElement).remove();
-		}
-		if(pageCount>5){
-			pageCount=5;
-			$(obj.nextElement).parent("li").before("<li class='disabled moreNumber'><a href='#'>...</a></li>");
-		}
-		for (var int = 1; int < pageCount; int++) {
-			$(obj.pageNumber+":first").after($(obj.pageNumber+":first").clone());
-		}
-		$(obj.pageNumber).each(function(index){
-			$(this).children("a").text(index+1);
-			$(this).children("a").removeClass("myactive");
-			$(this).removeClass("disabled");
-		});
-		
-		if(obj.currentCount==1){
-			$(obj.pageNumber).eq(0).addClass("disabled");
-			$(obj.pageNumber).eq(0).children("a").addClass("myactive");
-			$(obj.prevElement).parent("li").addClass("disabled");
-		}
-		if(obj.currentCount==pageCount){
-			$(obj.pageNumber).eq(pageCount-1).children("a").addClass("myactive");
-			$(obj.pageNumber).eq(pageCount-1).addClass("disabled");
-			$(obj.nextElement).parent("li").addClass("disabled");
-		}
-		$(obj.pageNumber).on("click",function(){
-			obj.currentCount=$(this).children("a").text();
-			$(obj.prevElement).parent("li").removeClass("disabled");
-			$(obj.nextElement).parent("li").removeClass("disabled");
-			if(obj.currentCount==1){
-				$(obj.pageNumber).eq(0).addClass("disabled");
-				$(obj.pageNumber).eq(0).children("a").addClass("myactive");
-				$(obj.prevElement).parent("li").addClass("disabled");
+	myPaginationHandler:function(){
+		var Pagination=(function(){
+			function Pagination(){
+				
 			}
-			if(obj.currentCount==pageCount){
-				$(obj.pageNumber).eq(pageCount-1).children("a").addClass("myactive");
-				$(obj.pageNumber).eq(pageCount-1).addClass("disabled");
-				$(obj.nextElement).parent("li").addClass("disabled");
-			}
-			$(obj.pageNumber).each(function(index){
-				$(this).children("a").text(index+1);
-				$(this).children("a").removeClass("myactive");
-				$(this).removeClass("disabled");
-			});
+			Pagination.prototype={
+					currentPage:1,//当前页
+					totalPage:0,//总页数
+					showPageNumberArray:[],//显示页码数组
+					 //获取总页码
+				    getTotalPage:function(totalNumber,pageNumber){
+				     return totalNumber%pageNumber==0?totalNumber/pageNumber:Math.ceil(totalNumber/pageNumber);
+				    },
+				    //获取当前页
+				    getCurrentPage:function(currentPage){
+				      return currentPage;
+				    },
+				     //获取显示数目
+				    getShowPageNumber:function(totalPage,pageNumber,mostShowPageNumber,currentPage){
+				      this.showPageNumberArray=[];//清空
+				      //小于设定的最大值的情况返回实际值
+				      if(totalPage<=mostShowPageNumber){
+				         for(var i=0;i< totalPage;i++){
+				        	 this.showPageNumberArray.push(i+1);
+				          }
+				          return this.showPageNumberArray;
+				      }
+				      //大于设定的最大值
+				      if(totalPage>mostShowPageNumber){
+				           //小于最大值一半的情况
+				           if(currentPage<=Math.ceil(mostShowPageNumber/2)){
+				                for(var i=0;i< mostShowPageNumber;i++){
+				                	this.showPageNumberArray.push(i+1);
+				              }
+				              return this.showPageNumberArray;    
+				           }
+				           //大于设定的最大值一半
+				           if(currentPage>Math.ceil(mostShowPageNumber/2)){
+				                   //如果最大值-当前值小于mostShowPageNumber，则显示(最大值-当前值)+1个
+				               if(totalPage<mostShowPageNumber+currentPage){
+				                   var lastPages=totalPage-currentPage;
+				               for(var i=0;i<lastPages+1;i++){
+				            	   this.showPageNumberArray.push(currentPage+i);
+				              }
+				              console.log( this.showPageNumberArray)
+				              return this.showPageNumberArray;
+				               }
+				               //如果当前值+最大的显示小于等于最大值，则显示mostShowPageNumber个
+				               if(currentPage+mostShowPageNumber<=totalPage){
+				               for(var j=0;j<mostShowPageNumber;j++){
+				            	   this.showPageNumberArray.push(currentPage+j-Math.floor(mostShowPageNumber/2));
+				              }
+				              return this.showPageNumberArray;
+				               }  
+				           }
+
+				      }
+				    return this.showPageNumberArray;
+				    },
+				    //到达的页面
+				     /**
+				      * content :点击的当前页目
+				      *currentPage:当前页
+				      *totalNumber:总页数
+				      */
+				    toPage:function(content,currentPage,totalPage){
+				    if(content=="首页"){
+				       if(currentPage==1){
+				          return false;
+				      }
+				      this.currentPage=1;
+				      return true;
+				    }
+				    if(content=="尾页"){
+				        if(currentPage==totalPage){
+				      return false;
+				      }
+				        this.currentPage=totalPage;
+				        return true;
+				    }
+				    if(content=="previous"){
+				      if(currentPage==1){
+				      return false;
+				      }
+				      currentPage--;
+				      this.currentPage=currentPage;
+				        return true;
+				    }
+				    if(content=="next"){
+				       if(currentPage==totalPage){
+				      return false;
+				      }
+				      currentPage++;
+				      this.currentPage=currentPage;
+				        return true;
+				    }
+				    if(content){
+				      currentPage=content;//当前页
+				      this.currentPage=currentPage;
+				        return true;
+				    }
+				    }	
+			};
 			
-			$(this).children("a").addClass("myactive");
-			$(this).addClass("disabled");
-		});
-		
+			return new Pagination();
+		})();
+		return Pagination;
 	}
 
 

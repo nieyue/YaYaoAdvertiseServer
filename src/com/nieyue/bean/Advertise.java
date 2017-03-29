@@ -23,10 +23,6 @@ public class Advertise implements Serializable{
 	 */
 	private String name;
 	/**
-	 * 计费方式
-	 */
-	private String billingMode;
-	/**
 	 * 类型
 	 */
 	private String type;
@@ -34,6 +30,14 @@ public class Advertise implements Serializable{
 	 * 子类型
 	 */
 	private String subtype;
+	/**
+	 * 计费方式
+	 */
+	private String billingMode;
+	/**
+	 * 地域
+	 */
+	private String region;
 	/**
 	 * 标题
 	 */
@@ -95,7 +99,8 @@ public class Advertise implements Serializable{
 
 
 	public Advertise(Integer advertiseId, String name, String type,
-			String subtype,String billingMode,String title, String img, String link, Double unitPrice,
+			String subtype,String billingMode,String region,String title,
+			String img, String link, Double unitPrice,
 			Integer unitDeliveryNumber, Integer nowUnitDeliveryNumber,
 			Double unitMoney, Double nowUnitMoney, String status,
 			Date startDeliveryDate, Date endDeliveryDate, Date updateDate,
@@ -106,6 +111,7 @@ public class Advertise implements Serializable{
 		this.billingMode=billingMode;
 		this.type = type;
 		this.subtype = subtype;
+		this.region=region;
 		this.title=title;
 		this.img = img;
 		this.link = link;
@@ -302,6 +308,16 @@ public class Advertise implements Serializable{
 
 	public void setBillingMode(String billingMode) {
 		this.billingMode = billingMode;
+	}
+
+
+	public String getRegion() {
+		return region;
+	}
+
+
+	public void setRegion(String region) {
+		this.region = region;
 	}
 
 

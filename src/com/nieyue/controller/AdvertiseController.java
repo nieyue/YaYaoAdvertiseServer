@@ -141,8 +141,7 @@ public class AdvertiseController {
 	public @ResponseBody StateResult clickAdvertise(
 			@RequestParam("advertiseId") Integer advertiseId,
 			@RequestParam("advertiseSpaceId") Integer advertiseSpaceId,
-			@RequestParam("advertiseUv") Integer advertiseUv,
-			@RequestParam("advertiseSpaceUv") Integer advertiseSpaceUv,
+			@RequestParam("uv") Integer uv,
 			HttpSession session,HttpServletRequest request)  {
 		boolean isSuccess=false;
 		boolean advertisespacePay=false;//默认广告位不计费
@@ -178,7 +177,7 @@ public class AdvertiseController {
 				
 				AdvertiseSpaceData ads=new AdvertiseSpaceData();
 				ads.setAdvertiseSpaceId(daoadvertisespace.getAdvertiseSpaceId());
-				ads.setPvs(1l);
+				//ads.setPvs(1l);
 				ads.setUvs(1l);
 				
 				
@@ -195,8 +194,8 @@ public class AdvertiseController {
 			
 		}else{
 			//有就更新
-			advertiseSpaceData.setPvs(advertiseSpaceData.getPvs()+1);
-			if(advertiseSpaceUv==1){
+			//advertiseSpaceData.setPvs(advertiseSpaceData.getPvs()+1);
+			if(uv==1){
 			advertiseSpaceData.setUvs(advertiseSpaceData.getUvs()+1);
 			}
 			//redis有就更新
@@ -226,12 +225,15 @@ public class AdvertiseController {
 						advertisespacePay=true;
 						daoadvertisespace.setNowUnitDeliveryNumber(daoadvertisespace.getNowUnitDeliveryNumber()+1);	
 					}
+			}else{
+				bso2.expire(DateUtil.currentToEndTime(), TimeUnit.SECONDS);
+				bso2.add(IPCountUtil.getIpAddr(request));
 			}
 			advertiseSpaceData.setForward(advertiseSpaceData.getForward()+0l);
 			advertiseSpaceDataService.updateAdvertiseSpaceData(advertiseSpaceData);
 			
 		}
-			if(advertisespacePay){
+			if(advertisespacePay && daoadvertise.getBillingMode().equals("CPC")){
 				/**
 				 * 广告位金钱更新
 				 */
@@ -288,7 +290,7 @@ public class AdvertiseController {
 				advertisePay=true;
 			AdvertiseData ad=new AdvertiseData();
 			ad.setAdvertiseId(daoadvertise.getAdvertiseId());
-			ad.setPvs(1l);
+			//ad.setPvs(1l);
 			ad.setUvs(1l);
 			daoadvertise.setNowUnitDeliveryNumber(daoadvertise.getNowUnitDeliveryNumber()+1);	
 			ad.setIps(1l);
@@ -305,8 +307,8 @@ public class AdvertiseController {
 			
 			}else{
 				//有就更新
-				advertiseData.setPvs(advertiseData.getPvs()+1);
-				if(advertiseUv==1){
+				//advertiseData.setPvs(advertiseData.getPvs()+1);
+				if(uv==1){
 				advertiseData.setUvs(advertiseData.getUvs()+1);
 				}
 				//redis有就更新
@@ -336,11 +338,14 @@ public class AdvertiseController {
 								advertisePay=true;
 								daoadvertise.setNowUnitDeliveryNumber(daoadvertise.getNowUnitDeliveryNumber()+1);
 							}
+				}else{
+					bso.expire(DateUtil.currentToEndTime(), TimeUnit.SECONDS);
+					bso.add(IPCountUtil.getIpAddr(request));
 				}
 				advertiseData.setForward(advertiseData.getForward()+0l);
 				advertiseDataService.updateAdvertiseData(advertiseData);
 			}
-			if(advertisePay){
+			if(advertisePay && daoadvertise.getBillingMode().equals("CPC")){
 			/**
 			 * 广告金钱更新
 			 */
@@ -387,26 +392,166 @@ public class AdvertiseController {
 	public @ResponseBody Advertise advertiseSpaceShowAdvertise(@RequestParam("advertiseSpaceId") Integer advertiseSpaceId,HttpSession session)  {
 		AdvertiseSpace advertiseSpace = advertiseSpaceService.loadAdvertiseSpace(advertiseSpaceId);
 		String platform = advertiseSpace.getPlatform();
+		String businessType = advertiseSpace.getBusinessType();
+		String billingMode = advertiseSpace.getBillingMode();
+		Double unitPrice = advertiseSpace.getUnitPrice();
+		String region = advertiseSpace.getRegion();
+		Double needUnitPrice=0.00;//展示此等价位以上的广告
+		String advertiseStatus="投放中";
+		if(billingMode.equals("CPM")){
+			needUnitPrice=unitPrice+1;
+		}
+		if(billingMode.equals("CPC")){
+			needUnitPrice=unitPrice+0.1;
+		}
+		String status = advertiseSpace.getStatus();
+		if(!status.equals("正常")){
+			return null;
+		}
 		Advertise advertise=new Advertise();
-		 advertise = advertiseService.browsePagingAdvertiseSpaceShowAdvertise(new Double(new DecimalFormat("0.00").format(advertiseSpace.getUnitPrice()+0.1)),"投放中",platform);
+		 advertise = advertiseService.browsePagingAdvertiseSpaceShowAdvertise(platform,businessType,billingMode,region,new Double(new DecimalFormat("0.00").format(needUnitPrice)),advertiseStatus);
 		int timer=1;
 		List<Advertise> list=new ArrayList<Advertise>();
 		while (true) {
 		if(advertise==null||advertise.equals("")){
-				advertise = advertiseService.browsePagingAdvertiseSpaceShowAdvertise(new Double(new DecimalFormat("0.00").format(advertiseSpace.getUnitPrice()+0.1)),"投放中",platform);
+				advertise = advertiseService.browsePagingAdvertiseSpaceShowAdvertise(platform,businessType,billingMode,region,new Double(new DecimalFormat("0.00").format(needUnitPrice)),advertiseStatus);
 		}else{
 			break;
 		}
 		timer++;
 		//防止无限循环
 		if(timer==10){
-			list = advertiseService.browsePagingAdvertiseSpaceShowAdvertiseBei(new Double(new DecimalFormat("0.00").format(advertiseSpace.getUnitPrice()+0.1)),"投放中",platform);
+			list = advertiseService.browsePagingAdvertiseSpaceShowAdvertiseBei(platform,businessType,billingMode,region,new Double(new DecimalFormat("0.00").format(needUnitPrice)),advertiseStatus);
 			if(list.size()>0){				
 			advertise=list.get(new Random().nextInt(list.size()));
 			}
 			break;
 		}
 		}
+		if(advertise==null){
+			return null;
+		}
+		//有展示就算pv
+		if(advertise.getAdvertiseId()!=null&&!advertise.getAdvertiseId().equals("")){
+			
+			AdvertiseSpaceData advertiseSpaceData = advertiseSpaceDataService.loadAdvertiseSpaceDataByAdvertiseSpaceIdAndDailyDay(advertiseSpace.getAdvertiseSpaceId(), new Date());
+			
+			AdvertiseData advertiseData = advertiseDataService.loadAdvertiseDataByAdvertiseIdAndDailyDay(advertise.getAdvertiseId(), new Date());
+			//如果没有当前的数据，增添加
+			if(advertiseData==null||advertiseData.equals("")){
+			AdvertiseData ad=new AdvertiseData();
+			ad.setAdvertiseId(advertise.getAdvertiseId());
+			ad.setPvs(1l);
+			ad.setUvs(0l);
+			ad.setIps(0l);
+			ad.setForward(0l);
+			ad.setDailyDay(new Date());
+			if(advertise.getBillingMode().equals("CPM")){
+			advertise.setNowUnitDeliveryNumber(advertise.getNowUnitDeliveryNumber()+1);	
+			}
+			advertiseDataService.addAdvertiseData(ad);
+			}else{
+				//有就更新
+				advertiseData.setPvs(advertiseData.getPvs()+1);
+				if(advertise.getBillingMode().equals("CPM")){
+				advertise.setNowUnitDeliveryNumber(advertise.getNowUnitDeliveryNumber()+1);
+				if(advertise.getNowUnitDeliveryNumber()/1000>0){//广告主大于0算一个千次计算
+					advertise.setNowUnitMoney((advertise.getNowUnitDeliveryNumber()/1000+1)*advertise.getUnitPrice());
+					advertiseService.updateAdvertise(advertise);
+					/**
+					 * 广告主主金钱更新、流水增加
+					 */
+					Admin adminadvertise = adminService.loadAdmin(advertise.getAdminId());
+					double nowMoney = adminadvertise.getMoney()-advertise.getNowUnitMoney();//消耗金钱
+					adminadvertise.setMoney(nowMoney);
+					 boolean um = adminService.updateAdmin(adminadvertise);
+					if(um){
+						WaterInformation daowaterinformation = waterInformationService.loadWaterInformationByAdminIdAndCreateDate(advertise.getAdminId(), new Date());
+						//不同天增加。
+						if(daowaterinformation==null || daowaterinformation.equals("")){
+							WaterInformation waterInformation=new WaterInformation();
+							waterInformation.setAdminId(advertise.getAdminId());
+							waterInformation.setName(advertise.getName());
+							waterInformation.setType("消耗");
+							waterInformation.setMoney(advertise.getNowUnitMoney());
+							//保存流水信息
+							if(advertise.getNowUnitMoney()>0.00){					
+								waterInformationService.addWaterInformation(waterInformation);
+							}
+						}else{
+							//同一天更新
+							daowaterinformation.setName(advertise.getName());
+							daowaterinformation.setType("消耗");
+							daowaterinformation.setMoney(daowaterinformation.getMoney()+advertise.getUnitPrice());
+							waterInformationService.updateWaterInformation(daowaterinformation);
+						}
+					}
+					
+				}
+				}
+				advertiseDataService.updateAdvertiseData(advertiseData);
+			}
+			
+			//如果没有当前的数据，增添加
+			if(advertiseSpaceData==null||advertiseSpaceData.equals("")){
+				
+				AdvertiseSpaceData ads=new AdvertiseSpaceData();
+				ads.setAdvertiseSpaceId(advertiseSpace.getAdvertiseSpaceId());
+				ads.setPvs(1l);
+				ads.setUvs(0l);
+				ads.setIps(0l);
+				ads.setForward(0l);
+				ads.setDailyDay(new Date());
+				if(advertise.getBillingMode().equals("CPM")){
+				advertiseSpace.setNowUnitDeliveryNumber(advertiseSpace.getNowUnitDeliveryNumber()+1);
+				}
+			advertiseSpaceDataService.addAdvertiseSpaceData(ads);
+		}else{
+			//有就更新
+			advertiseSpaceData.setPvs(advertiseSpaceData.getPvs()+1);
+			if(advertise.getBillingMode().equals("CPM")){
+				advertiseSpace.setNowUnitDeliveryNumber(advertiseSpace.getNowUnitDeliveryNumber()+1);
+				if(advertiseSpace.getNowUnitDeliveryNumber()/1000>=1){//如果超过1000次
+					/**
+					 * 广告位金钱更新
+					 */
+					advertiseSpace.setNowUnitMoney((advertiseSpace.getNowUnitDeliveryNumber()/1000)*advertiseSpace.getUnitPrice());//1000次计算
+					 advertiseSpaceService.updateAdvertiseSpace(advertiseSpace);				
+					/**
+					 * 网站主金钱更新、流水增加
+					 */
+					Admin adminadvertisespace= adminService.loadAdmin(advertiseSpace.getAdminId());
+					double nowMoney2 = adminadvertisespace.getMoney()+advertiseSpace.getNowUnitMoney();//盈利金钱
+					adminadvertisespace.setMoney(nowMoney2);
+					boolean um2 = adminService.updateAdmin(adminadvertisespace);
+					if(um2){
+						WaterInformation daowaterinformation2 = waterInformationService.loadWaterInformationByAdminIdAndCreateDate(advertiseSpace.getAdminId(), new Date());
+						//不同天增加。
+						if(daowaterinformation2==null || daowaterinformation2.equals("")){
+							WaterInformation waterInformation2=new WaterInformation();
+							waterInformation2.setAdminId(advertiseSpace.getAdminId());
+							waterInformation2.setName(advertiseSpace.getName());
+							waterInformation2.setType("盈利");
+							waterInformation2.setMoney(advertiseSpace.getUnitPrice());
+							//保存流水信息
+							if(advertiseSpace.getNowUnitMoney()>0.00){					
+								waterInformationService.addWaterInformation(waterInformation2);
+							}
+						}else{
+							//同一天更新
+							daowaterinformation2.setName(advertiseSpace.getName());
+							daowaterinformation2.setType("盈利");
+							daowaterinformation2.setMoney(daowaterinformation2.getMoney()+advertiseSpace.getUnitPrice());
+							waterInformationService.updateWaterInformation(daowaterinformation2);
+						}
+					}	
+				}
+			}
+			advertiseSpaceDataService.updateAdvertiseSpaceData(advertiseSpaceData);
+			
+		}
+		}
+		
 		return advertise;
 	}
 	/**
@@ -442,17 +587,14 @@ public class AdvertiseController {
 	 * @return
 	 */
 	@RequestMapping(value = "/count", method = {RequestMethod.GET,RequestMethod.POST})
-	public @ResponseBody int countAll(HttpSession session)  {
-		int count =advertiseService.countAll();
-		return count;
-	}
-	/**
-	 * 根据adminId广告浏览数量
-	 * @return
-	 */
-	@RequestMapping(value = "/count/{adminId}", method = {RequestMethod.GET,RequestMethod.POST})
-	public @ResponseBody int countAllByAdminId(@PathVariable("adminId") Integer adminId,HttpSession session)  {
-		int count =advertiseService.countAllByAdminId(adminId);
+	public @ResponseBody int countAll(
+			@RequestParam(value="adminId",defaultValue="null",required=false)Integer adminId,
+			@RequestParam(value="type",defaultValue="null",required=false)String type,
+			@RequestParam(value="subtype",defaultValue="null",required=false) String subtype,
+			@RequestParam(value="billingMode",required=false,defaultValue="null") String billingMode,
+			@RequestParam(value="region",required=false,defaultValue="null") String region,
+			HttpSession session)  {
+		int count =advertiseService.countAll(adminId, type, subtype, billingMode,region);
 		return count;
 	}
 	/**

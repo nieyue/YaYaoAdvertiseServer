@@ -3,10 +3,9 @@ document.querySelector('html body').style.cssText="margin:0;padding:0;-webkit-ov
 //var urlhost="http://advertiseserver.yayao8.com";
 var urlhost="http://localhost";
 var advertiseSpace=(function(){
-/**
-**对象初始化
-*/
-
+	/**
+	**对象初始化
+	*/
     function advertiseSpace(UI,advertiseSpaceConfig){
        //广告UI ，默认移动端配置
        this.UI={
@@ -34,6 +33,9 @@ var advertiseSpace=(function(){
        	name:'',//名称
         platform:'移动端',//平台
         type:'悬浮',//类型
+        business_type:'男性网站',
+        billing_mode:'CPC',
+        region:'全国',
         location:'顶部',
         unit_price:'',
         now_unit_delivery_number:'',
@@ -47,6 +49,8 @@ var advertiseSpace=(function(){
          name:'',//名称
          type:'',//类型
          subtype :'',//子类型
+         billing_mode:'CPC',
+         region:'全国',
          text:"新浪娱乐讯 今日（1月17日），刘恺威、王鸥领衔主演的《莽荒纪》曝光了IMAX版人物海报。刘恺威、王鸥、陈亦飞等人化身莽荒英雄，手握神兵利器，破幕而出，利用出屏的动作设计以及横向的观看形式，摄人心魄可玩性十足。",
          img:['http://www.yayao8.com/resources/img/logo.jpg','http://www.yayao8.com/resources/img/logo.jpg','http://www.yayao8.com/resources/img/logo.jpg'],//图片路径
          link:'',//链接地址
@@ -99,6 +103,9 @@ var advertiseSpace=(function(){
                     _this.advertiseSpaceConfig[0].name=JSON.parse(response).name;
                     _this.advertiseSpaceConfig[0].platform=JSON.parse(response).platform;
                     _this.advertiseSpaceConfig[0].type=JSON.parse(response).type;
+                    _this.advertiseSpaceConfig[0].business_type=JSON.parse(response).business_type;
+                    _this.advertiseSpaceConfig[0].billing_mode=JSON.parse(response).billing_mode;
+                    _this.advertiseSpaceConfig[0].region=JSON.parse(response).region;
                     _this.advertiseSpaceConfig[0].location=JSON.parse(response).location;
                     _this.advertiseSpaceConfig[0].status=JSON.parse(response).status;
                     _this.advertiseSpaceConfig[0].admin_id=JSON.parse(response).admin_id;
@@ -126,6 +133,9 @@ var advertiseSpace=(function(){
         	  success: function (response, xml) {
         		  // 此处放成功后执行的代码
         		  // _this.UI.imgUrl="http://dadi.c0563.com/MMUUAA/3536/0e2f79263a938ab70b62514bf7df487a";
+        		  if(response.code==40000){
+        			  throw "服务错误";
+        		  }
         		  if(!response){
         			  _this.advertiseSpaceConfig[0]=[];
         			 
@@ -136,6 +146,8 @@ var advertiseSpace=(function(){
         		  _this.advertiseSpaceConfig[0].advertiseList[0].name=JSON.parse(response).name;
         		  _this.advertiseSpaceConfig[0].advertiseList[0].type=JSON.parse(response).type;
         		  _this.advertiseSpaceConfig[0].advertiseList[0].subtype=JSON.parse(response).subtype;
+        		  _this.advertiseSpaceConfig[0].advertiseList[0].billing_mode=JSON.parse(response).billing_mode;
+        		  _this.advertiseSpaceConfig[0].advertiseList[0].region=JSON.parse(response).region;
         		  _this.advertiseSpaceConfig[0].advertiseList[0].text="";
         		  if(JSON.parse(response).title){
         			  _this.advertiseSpaceConfig[0].advertiseList[0].text=JSON.parse(response).title;
@@ -471,16 +483,11 @@ var advertiseSpace=(function(){
               },false);
              
              aopenAll[aopen].addEventListener('click',function(){
-            	 var advertiseUv=0;//默认广告不是独立访客
-            	 var advertiseSpaceUv=0;//默认广告位不是独立访客
+            	 var uv=0;//默认为0不是独立访客，没有uv,1为有uv
             	 //只有不存在，才是新访客
-            	if(!getCookie("advertiseUv"+_this.advertiseSpaceConfig[0].advertiseList[0].advertise_id)){
-            		setCookie("advertiseUv"+_this.advertiseSpaceConfig[0].advertiseList[0].advertise_id, _this.advertiseSpaceConfig[0].advertiseList[0].advertise_id, currentToEndTime());
-            		advertiseUv=1;
-            	} 
-            	if(!getCookie("advertiseSpaceUv"+_this.advertiseSpaceConfig[0].advertise_space_id)){
-            		setCookie("advertiseSpaceUv"+_this.advertiseSpaceConfig[0].advertise_space_id, _this.advertiseSpaceConfig[0].advertise_space_id, currentToEndTime());
-            		advertiseSpaceUv=1;
+            	if(!getCookie("advertiseUv"+_this.advertiseSpaceConfig[0].advertiseList[0].advertise_id+"advertiseSpaceUv"+_this.advertiseSpaceConfig[0].advertise_space_id)){
+            		setCookie("advertiseUv"+_this.advertiseSpaceConfig[0].advertiseList[0].advertise_id+"advertiseSpaceUv"+_this.advertiseSpaceConfig[0].advertise_space_id, "advertiseUv"+_this.advertiseSpaceConfig[0].advertiseList[0].advertise_id+"advertiseSpaceUv"+_this.advertiseSpaceConfig[0].advertise_space_id, currentToEndTime());
+            		uv=1;
             	} 
                myAjax({
                   url: urlhost+"/advertise/click",     //请求地址
@@ -488,8 +495,7 @@ var advertiseSpace=(function(){
                   data: {
                     advertiseId:_this.advertiseSpaceConfig[0].advertiseList[0].advertise_id,
                     advertiseSpaceId:_this.advertiseSpaceConfig[0].advertise_space_id,
-                    advertiseUv:advertiseUv,
-                    advertiseSpaceUv:advertiseSpaceUv
+                    uv:uv
                     },        //请求参数
                   dataType: "json",
                   success: function (response, xml) {

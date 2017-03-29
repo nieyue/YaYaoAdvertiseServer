@@ -44,8 +44,8 @@ public class AdvertiseSpaceServiceImpl implements AdvertiseSpaceService{
 	}
 
 	@Override
-	public int countAll() {
-		int c = advertiseSpaceDao.countAll();
+	public int countAll(Integer adminId,String type,String businessType,String billingMode,String region) {
+		int c = advertiseSpaceDao.countAll(adminId,type,businessType,billingMode,region);
 		return c;
 	}
 
@@ -60,12 +60,6 @@ public class AdvertiseSpaceServiceImpl implements AdvertiseSpaceService{
 		}
 		List<AdvertiseSpace> l = advertiseSpaceDao.browsePagingAdvertiseSpace(pageNum-1, pageSize, orderName, orderWay);
 		return l;
-	}
-
-	@Override
-	public int countAllByAdminId(Integer adminId) {
-		int c = advertiseSpaceDao.countAllByAdminId(adminId);
-		return c;
 	}
 
 	@Override

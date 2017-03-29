@@ -19,15 +19,13 @@ public interface AdvertiseService {
 	/** 装载广告 */	
 	public Advertise loadAdvertise(Integer advertiseId);	
 	/** 广告总共数目 */	
-	public int countAll();
-	/** 根据管理员广告总共数目 */	
-	public int countAllByAdminId(Integer adminId);	
+	public int countAll(Integer adminId,String type,String subtype,String billingMode,String region);		
 	/** 分页广告 */
 	public List<Advertise> browsePagingAdvertise(int pageNum,int pageSize,String orderName,String orderWay) ;
 	/** 根据金额随机一条广告 */
-	public Advertise browsePagingAdvertiseSpaceShowAdvertise(Double unitPrice,String status,String type) ;
+	public Advertise browsePagingAdvertiseSpaceShowAdvertise(String type,String subtype,String billingMode,String region,Double unitPrice,String status) ;
 	/** 根据金额随机一条广告 备胎 */
-	public List<Advertise> browsePagingAdvertiseSpaceShowAdvertiseBei(Double unitPrice,String status,String type) ;
+	public List<Advertise> browsePagingAdvertiseSpaceShowAdvertiseBei(String type,String subtype,String billingMode,String region,Double unitPrice,String status) ;
 	/** 根据管理员分页广告 */
 	public List<Advertise> browsePagingAdvertiseByAdminId(Integer adminId,int pageNum,int pageSize,String orderName,String orderWay) ;		
 }

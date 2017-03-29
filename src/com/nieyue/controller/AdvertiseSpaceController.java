@@ -143,17 +143,14 @@ public class AdvertiseSpaceController {
 	 * @return
 	 */
 	@RequestMapping(value = "/count", method = {RequestMethod.GET,RequestMethod.POST})
-	public @ResponseBody int countAll(HttpSession session)  {
-		int count = advertiseSpaceService.countAll();
-		return count;
-	}
-	/**
-	 * 根据adminId广告位浏览数量
-	 * @return
-	 */
-	@RequestMapping(value = "/count/{adminId}", method = {RequestMethod.GET,RequestMethod.POST})
-	public @ResponseBody int countAllByAdminId(@PathVariable("adminId")Integer adminId,HttpSession session)  {
-		int count = advertiseSpaceService.countAllByAdminId(adminId);
+	public @ResponseBody int countAll(
+			@RequestParam(value="adminId",defaultValue="null",required=false)Integer adminId,
+			@RequestParam(value="type",defaultValue="null",required=false)String type,
+			@RequestParam(value="businessType,",defaultValue="null",required=false) String businessType,
+			@RequestParam(value="billingMode",required=false,defaultValue="null") String billingMode,
+			@RequestParam(value="region",required=false,defaultValue="null") String region,
+			HttpSession session)  {
+		int count = advertiseSpaceService.countAll(adminId, type, businessType, billingMode,region);
 		return count;
 	}
 	/**

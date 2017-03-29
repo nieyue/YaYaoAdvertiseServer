@@ -10,6 +10,9 @@
    		 (name,
    		  platform,
    		  type,
+   		  business_type,
+   		  billing_mode,
+   		  region,
    		  location,
    		  unit_price,
    		  now_unit_delivery_number,
@@ -21,6 +24,9 @@
     	 (#{name},
     	 #{platform},
     	 #{type},
+    	 #{businessType},
+    	 #{billingMode},
+    	 #{region},
     	 #{location},
     	 #{unitPrice},
     	 #{nowUnitDeliveryNumber},
@@ -37,6 +43,9 @@
     	name=#{name},
     	platform=#{platform},
     	type=#{type},
+    	business_type=#{businessType},
+    	billing_mode=#{billingMode},
+    	region=#{region},
     	location=#{location},
     	unit_price=#{unitPrice},
     	now_unit_delivery_number=#{nowUnitDeliveryNumber},
@@ -60,6 +69,9 @@ SELECT
 	 	name,
     	platform,
     	type,
+    	business_type,
+    	billing_mode,
+    	region,
     	location,
     	unit_price,
    		now_unit_delivery_number,
@@ -78,6 +90,9 @@ WHERE advertise_space_id=#{advertiseSpaceId}
 	 	name,
     	platform,
     	type,
+    	business_type,
+    	billing_mode,
+    	region,
     	location,
     	unit_price,
    		now_unit_delivery_number,
@@ -98,6 +113,9 @@ WHERE advertise_space_id=#{advertiseSpaceId}
 	 	name,
     	platform,
     	type,
+    	business_type,
+    	billing_mode,
+    	region,
     	location,
     	unit_price,
    		now_unit_delivery_number,
@@ -118,13 +136,23 @@ WHERE advertise_space_id=#{advertiseSpaceId}
 	SELECT
 	 	count(advertise_space_id)
 	FROM advertise_space_tb
-</select>   
-<!-- 根据adminId统计记录条数 -->
-<select id="countAllByAdminId"  resultType="int">  
-	SELECT
-	 	count(advertise_space_id)
-	FROM advertise_space_tb
-	WHERE admin_id=#{adminId}
+		<where>
+	 <if test='adminId != null'>
+	AND admin_id=#{adminId}
+     </if> 
+	 <if test='type != null'>
+	AND type=#{type}
+     </if> 
+	 <if test='businessType != null'>
+	AND business_type=#{businessType}
+     </if> 
+	 <if test='billingMode != null'>
+	AND billing_mode=#{billingMode}
+     </if> 
+     <if test='region != null'>
+	AND region=#{region}
+     </if> 
+	</where>
 </select>   
    
  

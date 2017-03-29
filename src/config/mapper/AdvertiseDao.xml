@@ -9,9 +9,10 @@
    		  advertise_tb 
    		 (
    		 name,
-   		 billing_mode,
    		 type,
    		 subtype,
+   		 billing_mode,
+   		 region,
    		 title,
    		 img,
    		 link,
@@ -28,9 +29,10 @@
    VALUES
     	 (
     	 #{name},
-    	 #{billingMode},
     	 #{type},
     	 #{subtype},
+    	 #{billingMode},
+    	 #{region},
     	 #{title},
     	 #{img},
     	 #{link},
@@ -52,9 +54,10 @@
     	advertise_tb 
     SET 
     	name=#{name},
-    	billing_mode=#{billingMode},
     	type=#{type},
     	subtype=#{subtype},
+    	billing_mode=#{billingMode},
+    	region=#{region},
     	title=#{title},
     	img=#{img},
     	link=#{link},
@@ -78,13 +81,14 @@
     	 WHERE advertise_id=#{advertiseId}
 </delete>  
 <!-- 加载广告-->
-<select id="loadAdvertise" parameterType="Integer" resultType="Advertise" >
+<select id="loadAdvertise"  resultType="Advertise" >
 SELECT 
 		 advertise_id,
-		 billing_mode,
 	 	 name,
    		 type,
    		 subtype,
+		 billing_mode,
+		 region,
    		 title,
    		 img,
    		 link,
@@ -107,9 +111,10 @@ WHERE advertise_id=#{advertiseId}
 SELECT 
 		 advertise_id,
 	 	 name,
-	 	 billing_mode,
    		 type,
    		 subtype,
+	 	 billing_mode,
+	 	 region,
    		 title,
    		 img,
    		 link,
@@ -125,11 +130,27 @@ SELECT
    		 admin_id
 FROM advertise_tb as a1 
 JOIN (SELECT ROUND(RAND() * ((SELECT MAX(advertise_id) FROM advertise_tb)-(SELECT MIN(advertise_id) FROM advertise_tb))+(SELECT MIN(advertise_id) FROM advertise_tb)) AS aid) AS a2
-WHERE unit_price>=#{unitPrice} 
-AND billing_mode=#{billingMode}
-AND status=#{status}
-AND type=#{type}
-AND a1.advertise_id = a2.aid
+<where>
+	a1.advertise_id = a2.aid
+	 <if test='type != null'>
+	AND type=#{type}
+     </if> 
+	 <if test='subtype != null'>
+	AND subtype=#{subtype}
+     </if> 
+	 <if test='billingMode != null'>
+	AND billing_mode=#{billingMode}
+     </if> 
+	 <if test='region != null'>
+	AND region=#{region}
+     </if> 
+	 <if test='unitPrice != null'>
+	AND unit_price>=#{unitPrice}
+     </if> 
+	 <if test='status != null'>
+	AND status=#{status}
+     </if> 
+	</where>
 </select>
 <!-- 根据金额随机一条广告 备胎-->
 <select id="browsePagingAdvertiseSpaceShowAdvertiseBei"  resultType="Advertise" >
@@ -137,9 +158,10 @@ AND a1.advertise_id = a2.aid
 SELECT 
 		 advertise_id,
 	 	 name,
-	 	 billing_mode,
    		 type,
    		 subtype,
+	 	 billing_mode,
+	 	 region,
    		 title,
    		 img,
    		 link,
@@ -154,10 +176,26 @@ SELECT
    		 update_date,
    		 admin_id
 FROM advertise_tb 
-AND billing_mode=#{billingMode}
-WHERE unit_price>=#{unitPrice} 
-AND status=#{status}
-AND type=#{type}
+<where>
+	 <if test='type != null'>
+	AND type=#{type}
+     </if> 
+	 <if test='subtype != null'>
+	AND subtype=#{subtype}
+     </if> 
+	 <if test='billingMode != null'>
+	AND billing_mode=#{billingMode}
+     </if> 
+     <if test='region != null'>
+	AND region=#{region}
+     </if> 
+	 <if test='unitPrice != null'>
+	AND unit_price>=#{unitPrice}
+     </if> 
+	 <if test='status != null'>
+	AND status=#{status}
+     </if> 
+	</where>
 </select>
 
 <!-- 分页查询广告-->
@@ -165,9 +203,10 @@ AND type=#{type}
     SELECT
 	     advertise_id,
 	 	 name,
-	 	 billing_mode,
    		 type,
    		 subtype,
+	 	 billing_mode,
+	 	 region,
    		 title,
    		 img,
    		 link,
@@ -192,9 +231,10 @@ AND type=#{type}
     SELECT
 	     advertise_id,
 	 	 name,
-	 	 billing_mode,
    		 type,
    		 subtype,
+	 	 billing_mode,
+	 	 region,
    		 title,
    		 img,
    		 link,
@@ -217,16 +257,26 @@ AND type=#{type}
 </select> 
 
 <!-- 统计记录条数 -->
-<select id="countAll"  resultType="int">  
+<select id="countAll" resultType="int">  
 	SELECT
 	 	count(advertise_id)
 	FROM advertise_tb
-</select>   
-<!-- 根据adminId统计记录条数 -->
-<select id="countAllByAdminId"  resultType="int">  
-	SELECT
-	 	count(advertise_id)
-	FROM advertise_tb
-	WHERE admin_id=#{adminId}
+	<where>
+	 <if test='adminId != null'>
+	AND admin_id=#{adminId}
+     </if> 
+	 <if test='type != null'>
+	AND type=#{type}
+     </if> 
+	 <if test='subtype != null'>
+	AND subtype=#{subtype}
+     </if> 
+	 <if test='billingMode != null'>
+	AND billing_mode=#{billingMode}
+     </if> 
+     <if test='region != null'>
+	AND region=#{region}
+     </if> 
+	</where>
 </select>   
 </mapper>

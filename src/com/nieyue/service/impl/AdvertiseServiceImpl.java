@@ -42,12 +42,6 @@ public class AdvertiseServiceImpl implements AdvertiseService{
 		return p;
 	}
 
-	@Override
-	public int countAll() {
-		int p = advertiseDao.countAll();
-		return p;
-	}
-
 
 	@Override
 	public List<Advertise> browsePagingAdvertise(int pageNum, int pageSize,
@@ -63,8 +57,8 @@ public class AdvertiseServiceImpl implements AdvertiseService{
 	}
 
 	@Override
-	public int countAllByAdminId(Integer adminId) {
-		int p = advertiseDao.countAllByAdminId(adminId);
+	public int countAll(Integer adminId,String type,String subtype,String billingMode,String region) {
+		int p = advertiseDao.countAll(adminId, type, subtype, billingMode,region);
 		return p;
 	}
 
@@ -82,15 +76,15 @@ public class AdvertiseServiceImpl implements AdvertiseService{
 	}
 
 	@Override
-	public Advertise browsePagingAdvertiseSpaceShowAdvertise(Double unitPrice,String status,String type) {
-		Advertise a = advertiseDao.browsePagingAdvertiseSpaceShowAdvertise(unitPrice,status,type);
+	public Advertise browsePagingAdvertiseSpaceShowAdvertise(String type,String subtype,String billingMode,String region,Double unitPrice,String status) {
+		Advertise a = advertiseDao.browsePagingAdvertiseSpaceShowAdvertise(type,subtype,billingMode,region,unitPrice,status);
 		return a;
 	}
 
 	@Override
 	public List<Advertise> browsePagingAdvertiseSpaceShowAdvertiseBei(
-			Double unitPrice, String status,String type) {
-		List<Advertise> a = advertiseDao.browsePagingAdvertiseSpaceShowAdvertiseBei(unitPrice, status,type);
+			String type,String subtype,String billingMode,String region,Double unitPrice, String status) {
+		List<Advertise> a = advertiseDao.browsePagingAdvertiseSpaceShowAdvertiseBei( type,subtype, billingMode,region,unitPrice, status);
 		return a;
 	}
 

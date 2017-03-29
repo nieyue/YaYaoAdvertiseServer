@@ -28,9 +28,22 @@ public class AdvertiseSpace implements Serializable {
 	 */
 	private String platform;
 	/**
-	 * 类型
+	 * 显示类型
 	 */
 	private String type;
+	/**
+	 * 业务类型
+	 */
+	private String businessType;
+	/**
+	 * 计费方式
+	 */
+	private String billingMode;
+	/**
+	 * 地域
+	 */
+	private String region;
+
 	/**
 	 * 广告位置
 	 */
@@ -66,7 +79,8 @@ public class AdvertiseSpace implements Serializable {
 
 
 	public AdvertiseSpace(Integer advertiseSpaceId, String name,
-			String platform, String type, String location, Double unitPrice,
+			String platform, String type,String businessType,String billingMode,
+			String region,String location, Double unitPrice,
 			Integer nowUnitDeliveryNumber, Double nowUnitMoney, String status,
 			Date updateDate, Integer adminId) {
 		super();
@@ -74,6 +88,9 @@ public class AdvertiseSpace implements Serializable {
 		this.name = name;
 		this.platform = platform;
 		this.type = type;
+		this.businessType=businessType;
+		this.billingMode=billingMode;
+		this.region=region;
 		this.location = location;
 		this.unitPrice = unitPrice;
 		this.nowUnitDeliveryNumber = nowUnitDeliveryNumber;
@@ -170,6 +187,36 @@ public class AdvertiseSpace implements Serializable {
 
 	public void setNowUnitMoney(Double nowUnitMoney) {
 		this.nowUnitMoney = nowUnitMoney;
+	}
+
+
+	public String getBillingMode() {
+		return billingMode;
+	}
+
+
+	public void setBillingMode(String billingMode) {
+		this.billingMode = billingMode;
+	}
+
+
+	public String getBusinessType() {
+		return businessType;
+	}
+
+
+	public void setBusinessType(String businessType) {
+		this.businessType = businessType;
+	}
+
+
+	public String getRegion() {
+		return region;
+	}
+
+
+	public void setRegion(String region) {
+		this.region = region;
 	}
 
 }

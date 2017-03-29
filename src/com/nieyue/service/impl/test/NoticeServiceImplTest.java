@@ -28,6 +28,7 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
 import com.nieyue.bean.Advertise;
 import com.nieyue.bean.Notice;
 import com.nieyue.service.AdvertiseService;
+import com.nieyue.service.AdvertiseSpaceService;
 import com.nieyue.service.NoticeService;
 import com.nieyue.util.DateUtil;
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -38,6 +39,8 @@ public class NoticeServiceImplTest {
 	 NoticeService  noticeService;
 	@Resource
 	AdvertiseService  advertiseService;
+	@Resource
+	AdvertiseSpaceService  advertiseSpaceService;
 	@Resource
 	private StringRedisTemplate stringRedisTemplate;
 	@Before
@@ -72,15 +75,20 @@ public class NoticeServiceImplTest {
 	public void testLoadNotice() {
 		//Notice n = noticeService.loadNotice(1011);
 		//System.out.println(n);
-		Advertise advertise = advertiseService.browsePagingAdvertiseSpaceShowAdvertise(0.6,"投放中","PC端");
+		//Advertise advertise = advertiseService.browsePagingAdvertiseSpaceShowAdvertise(0.6,"投放中","PC端");
+		//Advertise advertise = advertiseService.loadAdvertise(1007);
+		Advertise advertise = advertiseService.loadAdvertise(1007);
 		System.out.println(advertise);
 		
 	}
 
 	@Test
 	public void testCountAll() {
-		int n = noticeService.countAll();
-		System.out.println(n);
+		//int n = noticeService.countAll();
+		//int a = advertiseService.countAll(null);
+		//int a = advertiseService.countAll(1001, "移动端", "男性网站", "CPM","全国");
+		int a = advertiseSpaceService.countAll(1023, null, null, null, null);
+		System.out.println(a);
 	}
 	@Test
 	public void dddredis() {
