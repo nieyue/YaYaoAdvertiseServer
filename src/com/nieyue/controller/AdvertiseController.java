@@ -588,11 +588,11 @@ public class AdvertiseController {
 	 */
 	@RequestMapping(value = "/count", method = {RequestMethod.GET,RequestMethod.POST})
 	public @ResponseBody int countAll(
-			@RequestParam(value="adminId",defaultValue="null",required=false)Integer adminId,
-			@RequestParam(value="type",defaultValue="null",required=false)String type,
-			@RequestParam(value="subtype",defaultValue="null",required=false) String subtype,
-			@RequestParam(value="billingMode",required=false,defaultValue="null") String billingMode,
-			@RequestParam(value="region",required=false,defaultValue="null") String region,
+			@RequestParam(value="adminId",required=false)Integer adminId,
+			@RequestParam(value="type",required=false)String type,
+			@RequestParam(value="subtype",required=false) String subtype,
+			@RequestParam(value="billingMode",required=false) String billingMode,
+			@RequestParam(value="region",required=false) String region,
 			HttpSession session)  {
 		int count =advertiseService.countAll(adminId, type, subtype, billingMode,region);
 		return count;

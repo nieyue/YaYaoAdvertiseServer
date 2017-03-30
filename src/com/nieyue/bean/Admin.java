@@ -91,6 +91,10 @@ public class Admin implements Serializable{
 	 *角色id外键
 	 */
 	private Integer roleId;
+	/**
+	 *上级id外键
+	 */
+	private Integer parentId;
 	
 	public Admin() {
 		super();
@@ -100,7 +104,7 @@ public class Admin implements Serializable{
 			String password, Double money,Double withdrawals,Double recharge, String identityCards,
 			String qq,String wechat, String bankUserName, String bankName,
 			String bankAccount, String bankAddress, String status,
-			Date createDate, Date lastLoginDate, Integer roleId) {
+			Date createDate, Date lastLoginDate, Integer roleId,Integer parentId) {
 		super();
 		this.adminId = adminId;
 		this.name = name;
@@ -121,6 +125,7 @@ public class Admin implements Serializable{
 		this.createDate = createDate;
 		this.lastLoginDate = lastLoginDate;
 		this.roleId = roleId;
+		this.parentId=parentId;
 	}
 
 	public Integer getAdminId() {
@@ -273,6 +278,14 @@ public class Admin implements Serializable{
 
 	public void setRecharge(Double recharge) {
 		this.recharge = recharge;
+	}
+
+	public Integer getParentId() {
+		return parentId;
+	}
+
+	public void setParentId(Integer parentId) {
+		this.parentId = parentId;
 	}
 
 }

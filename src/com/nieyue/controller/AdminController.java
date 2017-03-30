@@ -418,17 +418,11 @@ public class AdminController {
 	 * @return
 	 */
 	@RequestMapping(value = "/count", method = {RequestMethod.GET,RequestMethod.POST})
-	public @ResponseBody int countAll(HttpSession session)  {
-		int count = adminService.countAll();
-		return count;
-	}
-	/**
-	 * 根据角色管理员浏览数量
-	 * @return
-	 */
-	@RequestMapping(value = "/count/{roleId}", method = {RequestMethod.GET,RequestMethod.POST})
-	public @ResponseBody int countAll(@PathVariable("roleId") Integer roleId,HttpSession session)  {
-		int count = adminService.countAllByRoleId(roleId);
+	public @ResponseBody int countAll(
+			@RequestParam(value="roleId",required=false) Integer roleId,
+			@RequestParam(value="parentId",required=false) Integer parentId,
+			HttpSession session)  {
+		int count = adminService.countAll(roleId,parentId);
 		return count;
 	}
 	/**

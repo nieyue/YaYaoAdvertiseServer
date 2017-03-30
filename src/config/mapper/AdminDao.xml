@@ -24,7 +24,8 @@
    		 status,
    		 create_date,
    		 last_login_date,
-   		 role_id)
+   		 role_id,
+   		 parent_id)
    VALUES
     	 (#{name},
     	 #{cellPhone},
@@ -43,7 +44,9 @@
     	 #{status},
     	 #{createDate},
     	 #{lastLoginDate},
-    	 #{roleId})  
+    	 #{roleId},
+    	 #{parentId}
+    	 )  
 </insert>  
 <!-- 更新管理员 -->
 <update id="updateAdmin" parameterType="Admin" >  
@@ -67,7 +70,8 @@
     	status=#{status},
     	create_date=#{createDate},
     	last_login_date=#{lastLoginDate},
-    	role_id=#{roleId}
+    	role_id=#{roleId},
+   		parent_id=#{parentId}
     WHERE
     	 admin_id=#{adminId} 
 </update> 
@@ -98,7 +102,8 @@ SELECT
    		 status,
    		 create_date,
    		 last_login_date,
-   		 role_id
+   		 role_id,
+   		 parent_id
 FROM admin_tb 
 WHERE admin_id=#{adminId}
 </select>
@@ -123,7 +128,8 @@ SELECT
    		 status,
    		 create_date,
    		 last_login_date,
-   		 role_id
+   		 role_id,
+   		 parent_id
 FROM admin_tb 
 WHERE 
 (cell_phone=#{adminName}  OR email=#{adminName}) 
@@ -172,7 +178,8 @@ AND password=#{password}
    		 status,
    		 create_date,
    		 last_login_date,
-   		 role_id
+   		 role_id,
+   		 parent_id
 	FROM admin_tb
 	ORDER BY
 		${orderName}  ${orderWay}
@@ -200,7 +207,8 @@ AND password=#{password}
    		 status,
    		 create_date,
    		 last_login_date,
-   		 role_id
+   		 role_id,
+   		 parent_id
 	FROM admin_tb
 	WHERE role_id=#{roleId}
 	ORDER BY
@@ -229,10 +237,42 @@ AND password=#{password}
    		 status,
    		 create_date,
    		 last_login_date,
-   		 role_id
+   		 role_id,
+   		 parent_id
 	FROM admin_tb
 	ORDER BY
 		${orderName}  ${orderWay}
+</select> 
+
+<!-- 根据上级ID分页查询管理员-->
+<select id="browsePagingAdminByParentId" resultType="Admin">  
+    SELECT
+	     admin_id,
+	 	 name,
+   		 cell_phone,
+   		 email,
+   		 password,
+   		 money,
+   		 withdrawals,
+   		 recharge,
+   		 identity_cards,
+   		 qq,
+   		 wechat,
+   		 bank_user_name,
+   		 bank_name,
+   		 bank_account,
+   		 bank_address,
+   		 status,
+   		 create_date,
+   		 last_login_date,
+   		 role_id,
+   		 parent_id
+	FROM admin_tb
+	WHERE parent_id=#{parentId}
+	ORDER BY
+		${orderName}  ${orderWay}
+	LIMIT
+		#{pageNum},#{pageSize}
 </select> 
 
 <!-- 统计记录条数 -->
@@ -240,14 +280,14 @@ AND password=#{password}
 	SELECT
 	 	count(admin_id)
 	FROM admin_tb
+	<where>
+	<if test="roleId!=null">
+	AND role_id=#{roleId}
+	</if>
+	<if test="parentId!=null">
+	AND parent_id=#{parentId}
+	</if>
+	</where>
 </select>   
-<!-- 根据角色统计记录条数 -->
-<select id="countAllByRoleId"  resultType="int">  
-	SELECT
-	 	count(admin_id)
-	FROM admin_tb
-	WHERE role_id=#{roleId}
-</select>   
-   
  
 </mapper>

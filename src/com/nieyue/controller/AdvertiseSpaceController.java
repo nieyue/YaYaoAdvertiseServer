@@ -144,11 +144,11 @@ public class AdvertiseSpaceController {
 	 */
 	@RequestMapping(value = "/count", method = {RequestMethod.GET,RequestMethod.POST})
 	public @ResponseBody int countAll(
-			@RequestParam(value="adminId",defaultValue="null",required=false)Integer adminId,
-			@RequestParam(value="type",defaultValue="null",required=false)String type,
-			@RequestParam(value="businessType,",defaultValue="null",required=false) String businessType,
-			@RequestParam(value="billingMode",required=false,defaultValue="null") String billingMode,
-			@RequestParam(value="region",required=false,defaultValue="null") String region,
+			@RequestParam(value="adminId",required=false)Integer adminId,
+			@RequestParam(value="type",required=false)String type,
+			@RequestParam(value="businessType,",required=false) String businessType,
+			@RequestParam(value="billingMode",required=false) String billingMode,
+			@RequestParam(value="region",required=false) String region,
 			HttpSession session)  {
 		int count = advertiseSpaceService.countAll(adminId, type, businessType, billingMode,region);
 		return count;

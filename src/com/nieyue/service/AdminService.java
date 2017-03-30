@@ -23,9 +23,7 @@ public interface AdminService {
 	/** 修改金钱 */	
 	public boolean moneyAdmin(Integer adminId,Double money);
 	/** 管理员 总共数目 */	
-	public int countAll();	
-	/** 根据角色选择管理员 总共数目 */	
-	public int countAllByRoleId(Integer roleId);
+	public int countAll(Integer roleId,Integer parentId);
 	/** 根据角色选择管理员 分页信息 */
 	public List<Admin> browsePagingAdminByRoleId(Integer roleId,int pageNum,int pageSize,String orderName,String orderWay) ;		
 	/** 管理员 分页信息 */
@@ -35,5 +33,8 @@ public interface AdminService {
 	/** 所有登录邮箱 */	
 	public List<String> browseAllAdminEmail();	
 	/** 管理员 全部信息 */
-	public List<Admin> browseAllAdmin(String orderName,String orderWay) ;		
+	public List<Admin> browseAllAdmin(String orderName,String orderWay) ;
+	/** 根据上级ID选择管理员 分页信息  */	
+	public List<Admin> browsePagingAdminByParentId(Integer parentId,int pageNum,int pageSize,String orderName,String orderWay);
+
 }

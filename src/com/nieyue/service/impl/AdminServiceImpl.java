@@ -22,6 +22,7 @@ public class AdminServiceImpl implements AdminService{
 		admin.setMoney(0.00);
 		admin.setWithdrawals(0.00);
 		admin.setRecharge(0.00);
+		admin.setParentId(0);//默认为0,没有上级
 		if(admin.getStatus()==null||admin.getStatus().equals("")){
 			admin.setStatus("审核中");
 		}
@@ -48,8 +49,8 @@ public class AdminServiceImpl implements AdminService{
 	}
 
 	@Override
-	public int countAll() {
-		int c = adminDao.countAll();
+	public int countAll(Integer roleId,Integer parentId) {
+		int c = adminDao.countAll(roleId,parentId);
 		return c;
 	}
 
@@ -93,11 +94,6 @@ public class AdminServiceImpl implements AdminService{
 			return l;
 	}
 
-	@Override
-	public int countAllByRoleId(Integer roleId) {
-		int c = adminDao.countAllByRoleId(roleId);
-		return c;
-	}
 
 	@Override
 	public List<Admin> browsePagingAdminByRoleId(Integer roleId, int pageNum,
@@ -116,6 +112,19 @@ public class AdminServiceImpl implements AdminService{
 	public boolean moneyAdmin(Integer adminId,Double money) {
 		boolean b = adminDao.moneyAdmin(adminId,money);
 		return b;
+	}
+
+	@Override
+	public List<Admin> browsePagingAdminByParentId(Integer parentId, int pageNum, int pageSize, String orderName,
+			String orderWay) {
+		if(pageNum<1){
+			pageNum=1;
+		}
+		if(pageSize<1){
+			pageSize=0;//没有数据
+		}
+		List<Admin> l = adminDao.browsePagingAdminByParentId(parentId, pageNum-1, pageSize, orderName, orderWay);
+		return l;
 	}
 
 	

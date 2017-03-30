@@ -25,9 +25,7 @@ public interface AdminDao {
 	/** 修改金钱 */	
 	public boolean moneyAdmin(@Param("adminId")Integer adminId,@Param("money")Double money);
 	/** 管理员 总共数目 */	
-	public int countAll();
-	/** 根据角色选择管理员 总共数目 */	
-	public int countAllByRoleId(Integer roleId);
+	public int countAll(@Param("roleId")Integer roleId,@Param("parentId")Integer parentId);
 	/** 所有登录手机号 */	
 	public List<String> browseAllAdminPhone();	
 	/** 所有登录邮箱 */	
@@ -38,4 +36,7 @@ public interface AdminDao {
 	public List<Admin> browsePagingAdminByRoleId(@Param("roleId")Integer roleId,@Param("pageNum")int pageNum,@Param("pageSize")int pageSize,@Param("orderName")String orderName,@Param("orderWay")String orderWay) ;		
 	/** 管理员 全部信息 */
 	public List<Admin> browseAllAdmin(@Param("orderName")String orderName,@Param("orderWay")String orderWay) ;		
+	/** 根据上级ID选择管理员 分页信息  */	
+	public List<Admin> browsePagingAdminByParentId(@Param("parentId")Integer parentId,@Param("pageNum")int pageNum,@Param("pageSize")int pageSize,@Param("orderName")String orderName,@Param("orderWay")String orderWay);
+
 }
