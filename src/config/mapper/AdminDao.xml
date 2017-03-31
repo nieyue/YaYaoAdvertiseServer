@@ -22,6 +22,7 @@
    		 bank_account,
    		 bank_address,
    		 status,
+   		 can_open_account,
    		 create_date,
    		 last_login_date,
    		 role_id,
@@ -42,6 +43,7 @@
     	 #{bankAccount},
     	 #{bankAddress},
     	 #{status},
+    	 #{canOpenAccount},
     	 #{createDate},
     	 #{lastLoginDate},
     	 #{roleId},
@@ -68,6 +70,7 @@
     	bank_account=#{bankAccount},
     	bank_address=#{bankAddress},
     	status=#{status},
+    	can_open_account=#{canOpenAccount},
     	create_date=#{createDate},
     	last_login_date=#{lastLoginDate},
     	role_id=#{roleId},
@@ -100,6 +103,7 @@ SELECT
    		 bank_account,
    		 bank_address,
    		 status,
+   		 can_open_account,
    		 create_date,
    		 last_login_date,
    		 role_id,
@@ -126,6 +130,7 @@ SELECT
    		 bank_account,
    		 bank_address,
    		 status,
+   		 can_open_account,
    		 create_date,
    		 last_login_date,
    		 role_id,
@@ -176,46 +181,26 @@ AND password=#{password}
    		 bank_account,
    		 bank_address,
    		 status,
+   		 can_open_account,
    		 create_date,
    		 last_login_date,
    		 role_id,
    		 parent_id
 	FROM admin_tb
+	<where>
+	<if test="roleId!=null">
+	AND role_id=#{roleId}
+	</if>
+	<if test="parentId!=null">
+	AND parent_id=#{parentId}
+	</if>
+	</where>
 	ORDER BY
 		${orderName}  ${orderWay}
 	LIMIT
 		#{pageNum},#{pageSize}
 </select> 
-<!-- 根据角色分页查询管理员-->
-<select id="browsePagingAdminByRoleId" resultType="Admin">  
-    SELECT
-	     admin_id,
-	 	 name,
-   		 cell_phone,
-   		 email,
-   		 password,
-   		 money,
-   		 withdrawals,
-   		 recharge,
-   		 identity_cards,
-   		 qq,
-   		 wechat,
-   		 bank_user_name,
-   		 bank_name,
-   		 bank_account,
-   		 bank_address,
-   		 status,
-   		 create_date,
-   		 last_login_date,
-   		 role_id,
-   		 parent_id
-	FROM admin_tb
-	WHERE role_id=#{roleId}
-	ORDER BY
-		${orderName}  ${orderWay}
-	LIMIT
-		#{pageNum},#{pageSize}
-</select> 
+
 <!-- 查询全部管理员-->
 <select id="browseAllAdmin" resultType="Admin">  
     SELECT
@@ -235,6 +220,7 @@ AND password=#{password}
    		 bank_account,
    		 bank_address,
    		 status,
+   		 can_open_account,
    		 create_date,
    		 last_login_date,
    		 role_id,
@@ -242,37 +228,6 @@ AND password=#{password}
 	FROM admin_tb
 	ORDER BY
 		${orderName}  ${orderWay}
-</select> 
-
-<!-- 根据上级ID分页查询管理员-->
-<select id="browsePagingAdminByParentId" resultType="Admin">  
-    SELECT
-	     admin_id,
-	 	 name,
-   		 cell_phone,
-   		 email,
-   		 password,
-   		 money,
-   		 withdrawals,
-   		 recharge,
-   		 identity_cards,
-   		 qq,
-   		 wechat,
-   		 bank_user_name,
-   		 bank_name,
-   		 bank_account,
-   		 bank_address,
-   		 status,
-   		 create_date,
-   		 last_login_date,
-   		 role_id,
-   		 parent_id
-	FROM admin_tb
-	WHERE parent_id=#{parentId}
-	ORDER BY
-		${orderName}  ${orderWay}
-	LIMIT
-		#{pageNum},#{pageSize}
 </select> 
 
 <!-- 统计记录条数 -->

@@ -292,13 +292,13 @@
 		</mvc:interceptor>
 	</mvc:interceptors> -->
 	<!-- 拦截权限 -->
-	  <!-- <mvc:interceptors>
+	   <mvc:interceptors>
 		<mvc:interceptor>
 			<mvc:mapping path="/**"></mvc:mapping>
 			<mvc:exclude-mapping path="/exception/**"/>
 			<bean class="com.nieyue.interceptor.AdminControllerSessionInterceptor"></bean>
 		</mvc:interceptor>
-	</mvc:interceptors>   -->
+	</mvc:interceptors>   
 	
 	<!-- 拦截器配置 -->
 	<!-- <mvc:interceptors > 配置Shiro拦截器，实现注册用户的注入 <mvc:interceptor > <mvc:mapping 

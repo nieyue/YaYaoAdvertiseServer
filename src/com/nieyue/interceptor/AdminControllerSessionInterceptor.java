@@ -84,7 +84,6 @@ public class AdminControllerSessionInterceptor implements HandlerInterceptor {
         		
         		return true;
         	}
-        	
         	}
         	
         }

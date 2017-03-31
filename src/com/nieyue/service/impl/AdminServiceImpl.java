@@ -22,7 +22,12 @@ public class AdminServiceImpl implements AdminService{
 		admin.setMoney(0.00);
 		admin.setWithdrawals(0.00);
 		admin.setRecharge(0.00);
-		admin.setParentId(0);//默认为0,没有上级
+		if(admin.getCanOpenAccount()==null||admin.getCanOpenAccount().equals("")){
+			admin.setCanOpenAccount(0);;//默认为0,不能开户，1为能开户			
+		}
+		if(admin.getParentId()==null||admin.getParentId().equals("")){
+			admin.setParentId(0);//默认为0,没有上级			
+		}
 		if(admin.getStatus()==null||admin.getStatus().equals("")){
 			admin.setStatus("审核中");
 		}
@@ -55,7 +60,7 @@ public class AdminServiceImpl implements AdminService{
 	}
 
 	@Override
-	public List<Admin> browsePagingAdmin(int pageNum, int pageSize,
+	public List<Admin> browsePagingAdmin(Integer roleId,Integer parentId,int pageNum, int pageSize,
 			String orderName, String orderWay) {
 		if(pageNum<1){
 			pageNum=1;
@@ -63,7 +68,7 @@ public class AdminServiceImpl implements AdminService{
 		if(pageSize<1){
 			pageSize=0;//没有数据
 		}
-		List<Admin> l = adminDao.browsePagingAdmin(pageNum-1, pageSize, orderName, orderWay);
+		List<Admin> l = adminDao.browsePagingAdmin(roleId, parentId,pageNum-1, pageSize, orderName, orderWay);
 		return l;
 	}
 
@@ -96,36 +101,9 @@ public class AdminServiceImpl implements AdminService{
 
 
 	@Override
-	public List<Admin> browsePagingAdminByRoleId(Integer roleId, int pageNum,
-			int pageSize, String orderName, String orderWay) {
-		if(pageNum<1){
-			pageNum=1;
-		}
-		if(pageSize<1){
-			pageSize=0;//没有数据
-		}
-		List<Admin> l = adminDao.browsePagingAdminByRoleId(roleId, pageNum-1, pageSize, orderName, orderWay);
-		return l;
-	}
-
-	@Override
 	public boolean moneyAdmin(Integer adminId,Double money) {
 		boolean b = adminDao.moneyAdmin(adminId,money);
 		return b;
 	}
 
-	@Override
-	public List<Admin> browsePagingAdminByParentId(Integer parentId, int pageNum, int pageSize, String orderName,
-			String orderWay) {
-		if(pageNum<1){
-			pageNum=1;
-		}
-		if(pageSize<1){
-			pageSize=0;//没有数据
-		}
-		List<Admin> l = adminDao.browsePagingAdminByParentId(parentId, pageNum-1, pageSize, orderName, orderWay);
-		return l;
-	}
-
-	
 }

@@ -79,6 +79,10 @@ public class Admin implements Serializable{
 	 */
 	private String status;
 	/**
+	 *开账号权限
+	 */
+	private Integer canOpenAccount;
+	/**
 	 * 账号创建时间
 	 */
 	private Date createDate;
@@ -103,7 +107,7 @@ public class Admin implements Serializable{
 	public Admin(Integer adminId, String name, String cellPhone, String email,
 			String password, Double money,Double withdrawals,Double recharge, String identityCards,
 			String qq,String wechat, String bankUserName, String bankName,
-			String bankAccount, String bankAddress, String status,
+			String bankAccount, String bankAddress, String status,Integer canOpenAccount,
 			Date createDate, Date lastLoginDate, Integer roleId,Integer parentId) {
 		super();
 		this.adminId = adminId;
@@ -122,6 +126,7 @@ public class Admin implements Serializable{
 		this.bankAccount = bankAccount;
 		this.bankAddress = bankAddress;
 		this.status = status;
+		this.canOpenAccount=canOpenAccount;
 		this.createDate = createDate;
 		this.lastLoginDate = lastLoginDate;
 		this.roleId = roleId;
@@ -286,6 +291,14 @@ public class Admin implements Serializable{
 
 	public void setParentId(Integer parentId) {
 		this.parentId = parentId;
+	}
+
+	public Integer getCanOpenAccount() {
+		return canOpenAccount;
+	}
+
+	public void setCanOpenAccount(Integer canOpenAccount) {
+		this.canOpenAccount = canOpenAccount;
 	}
 
 }

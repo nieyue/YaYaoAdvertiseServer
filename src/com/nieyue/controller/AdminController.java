@@ -27,7 +27,6 @@ import com.nieyue.bean.WaterInformation;
 import com.nieyue.exception.StateResult;
 import com.nieyue.mail.SendMailDemo;
 import com.nieyue.service.AdminService;
-import com.nieyue.service.JurisdictionService;
 import com.nieyue.service.RoleService;
 import com.nieyue.service.WaterInformationService;
 import com.nieyue.token.TokenManager;
@@ -56,8 +55,6 @@ public class AdminController {
 	@Autowired
 	private RoleService roleService;
 	@Autowired
-	private JurisdictionService jurisdictionService;
-	@Autowired
 	private WaterInformationService waterInformationService;
 	
 	/**
@@ -68,30 +65,15 @@ public class AdminController {
 	 */
 	@RequestMapping(value = "/list", method = {RequestMethod.GET,RequestMethod.POST})
 	public @ResponseBody List<Admin> browsePagingAdmin(
+			@RequestParam(value="roleId",required=false)Integer roleId,
+			@RequestParam(value="parentId",required=false)Integer parentId,
 			@RequestParam(value="pageNum",defaultValue="1",required=false)int pageNum,
 			@RequestParam(value="pageSize",defaultValue="10",required=false) int pageSize,
 			@RequestParam(value="orderName",required=false,defaultValue="admin_id") String orderName,
 			@RequestParam(value="orderWay",required=false,defaultValue="desc") String orderWay,HttpSession session)  {
 			List<Admin> list = new ArrayList<Admin>();
-			list= adminService.browsePagingAdmin(pageNum, pageSize, orderName, orderWay);
+			list= adminService.browsePagingAdmin(roleId,parentId,pageNum, pageSize, orderName, orderWay);
 			return list;
-	}
-	/**
-	 * 根据角色管理员分页浏览
-	 * @param orderName 商品排序数据库字段
-	 * @param orderWay 商品排序方法 asc升序 desc降序
-	 * @return
-	 */
-	@RequestMapping(value = "/list/role", method = {RequestMethod.GET,RequestMethod.POST})
-	public @ResponseBody List<Admin> browsePagingAdminByRoleId(
-			@RequestParam(value="roleId",defaultValue="1000",required=false)int roleId,
-			@RequestParam(value="pageNum",defaultValue="1",required=false)int pageNum,
-			@RequestParam(value="pageSize",defaultValue="10",required=false) int pageSize,
-			@RequestParam(value="orderName",required=false,defaultValue="admin_id") String orderName,
-			@RequestParam(value="orderWay",required=false,defaultValue="desc") String orderWay,HttpSession session)  {
-		List<Admin> list = new ArrayList<Admin>();
-		list= adminService.browsePagingAdminByRoleId(roleId, pageNum, pageSize, orderName, orderWay);
-		return list;
 	}
 	/**
 	 * 管理员全部查询
@@ -385,6 +367,35 @@ public class AdminController {
 	 */
 	@RequestMapping(value = "/add", method = {RequestMethod.GET,RequestMethod.POST})
 	public @ResponseBody StateResult addAdmin(@ModelAttribute Admin admin, HttpSession session) {
+		//不能添加相同的手机号或者邮箱
+		List<String> lp = adminService.browseAllAdminPhone();
+		List<String> le = adminService.browseAllAdminEmail();
+		lp.removeAll(Collections.singleton(null));
+		le.removeAll(Collections.singleton(null));
+		for (int i = 0; i < lp.size(); i++) {
+			if(lp.get(i).equals(admin.getCellPhone())){
+				return StateResult.getSlefSR(40002, "手机号已经存在");
+			}
+		}
+		for (int i = 0; i < le.size(); i++) {
+			if(le.get(i).equals(admin.getEmail())){
+				return StateResult.getSlefSR(40002, "email已经存在");
+			}
+		}
+		admin.setPassword( MyDESutil.getMD5(admin.getPassword()));
+		boolean am = adminService.addAdmin(admin);
+		return StateResult.getSR(am);
+	}
+	/**
+	 * 二级代理增加
+	 * @return 
+	 */
+	@RequestMapping(value = "/increase", method = {RequestMethod.GET,RequestMethod.POST})
+	public @ResponseBody StateResult increaseAdmin(@ModelAttribute Admin admin, HttpSession session) {
+		Admin sessionAdmin = (Admin) session.getAttribute("admin");
+		if(sessionAdmin==null||!sessionAdmin.getAdminId().equals(admin.getParentId())){
+			return StateResult.getSR(false);
+		}
 		//不能添加相同的手机号或者邮箱
 		List<String> lp = adminService.browseAllAdminPhone();
 		List<String> le = adminService.browseAllAdminEmail();

@@ -74,7 +74,8 @@ public class NoticeControllerTest {
 	@Test
 	public void testCount() throws Exception {
 		//String url="/admin/count?roleId=1000";
-		String url="/admin/count";
+		//String url="/admin/count";
+		String url="/admin/count?roleId=df";
 		this.mvc.perform(get(url))
 		//.andExpect(status().isOk())
 		.andDo(print());
