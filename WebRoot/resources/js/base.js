@@ -289,7 +289,7 @@ var myUtils = {
 	{
 	var exp = new Date();
 	exp.setTime(exp.getTime() + expires*1000);
-	document.cookie = name + "="+ escape (value) + ";expires=" + exp.toGMTString();
+	document.cookie = name + "="+ escape (value) + ";path=/;expires=" + exp.toGMTString();
 	},
 	// 读取cookie
 	getCookie:function (name)
@@ -307,7 +307,7 @@ var myUtils = {
 	exp.setTime(exp.getTime() - 1);
 	var cval=myUtils.getCookie(name);
 	if(cval!=null)
-	document.cookie= name + "="+cval+";expires="+exp.toGMTString();
+	document.cookie= name + "="+cval+";path=/;expires="+exp.toGMTString();
 	},
 	
 	/**

@@ -393,9 +393,10 @@ public class AdminController {
 	@RequestMapping(value = "/increase", method = {RequestMethod.GET,RequestMethod.POST})
 	public @ResponseBody StateResult increaseAdmin(@ModelAttribute Admin admin, HttpSession session) {
 		Admin sessionAdmin = (Admin) session.getAttribute("admin");
-		if(sessionAdmin==null||!sessionAdmin.getAdminId().equals(admin.getParentId())){
-			return StateResult.getSR(false);
-		}
+		//Role sessionRole = (Role) session.getAttribute("role");
+		Role sessionRole = roleService.loadRole(sessionAdmin.getRoleId());
+		if(sessionAdmin.getAdminId().equals(admin.getParentId()) || sessionRole.getName().equals("超级管理员")
+				|| sessionRole.getName().equals("渠道管理员")|| sessionRole.getName().equals("广告管理员")){
 		//不能添加相同的手机号或者邮箱
 		List<String> lp = adminService.browseAllAdminPhone();
 		List<String> le = adminService.browseAllAdminEmail();
@@ -414,6 +415,9 @@ public class AdminController {
 		admin.setPassword( MyDESutil.getMD5(admin.getPassword()));
 		boolean am = adminService.addAdmin(admin);
 		return StateResult.getSR(am);
+		}else{
+			return StateResult.getSR(false);
+		}
 	}
 	/**
 	 *管理员 删除

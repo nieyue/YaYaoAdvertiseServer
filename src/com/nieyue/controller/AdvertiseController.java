@@ -246,6 +246,13 @@ public class AdvertiseController {
 				double nowMoney2 = adminadvertisespace.getMoney()+daoadvertisespace.getNowUnitMoney();//盈利金钱
 				adminadvertisespace.setMoney(nowMoney2);
 				boolean um2 = adminService.updateAdmin(adminadvertisespace);
+				//代理费用
+				if(!adminadvertisespace.getParentId().equals(0)){
+					Admin parentadminadvertisespace = adminService.loadAdmin(adminadvertisespace.getParentId());
+					double nowMoney22 = parentadminadvertisespace.getMoney()+(daoadvertisespace.getNowUnitDeliveryNumber()/1000+1)*0.25;//佣金金钱
+					parentadminadvertisespace.setMoney(nowMoney22);
+					adminService.updateAdmin(parentadminadvertisespace);
+				}
 				if(um2){
 					WaterInformation daowaterinformation2 = waterInformationService.loadWaterInformationByAdminIdAndCreateDate(daoadvertisespace.getAdminId(), new Date());
 					//不同天增加。
@@ -265,6 +272,25 @@ public class AdvertiseController {
 						daowaterinformation2.setType("盈利");
 						daowaterinformation2.setMoney(daowaterinformation2.getMoney()+daoadvertisespace.getUnitPrice());
 						waterInformationService.updateWaterInformation(daowaterinformation2);
+					}
+					WaterInformation daowaterinformation22 = waterInformationService.loadWaterInformationByAdminIdAndCreateDate(adminadvertisespace.getParentId(), new Date());
+					//不同天增加。
+					if(daowaterinformation22==null || daowaterinformation22.equals("")){
+						WaterInformation waterInformation22=new WaterInformation();
+						waterInformation22.setAdminId(adminadvertisespace.getParentId());
+						waterInformation22.setName(daoadvertisespace.getName());
+						waterInformation22.setType("获取佣金");
+						waterInformation22.setMoney((daoadvertisespace.getNowUnitDeliveryNumber()/1000+1)*0.25);
+						//保存流水信息
+						if(daoadvertisespace.getNowUnitMoney()>0.00){					
+							waterInformationService.addWaterInformation(waterInformation22);
+						}
+					}else{
+						//同一天更新
+						daowaterinformation22.setName(daoadvertisespace.getName());
+						daowaterinformation22.setType("获取佣金");
+						daowaterinformation22.setMoney(daowaterinformation22.getMoney()+(daoadvertisespace.getNowUnitDeliveryNumber()/1000+1)*0.25);
+						waterInformationService.updateWaterInformation(daowaterinformation22);
 					}
 				}
 			}
@@ -358,6 +384,13 @@ public class AdvertiseController {
 			double nowMoney = adminadvertise.getMoney()-daoadvertise.getNowUnitMoney();//消耗金钱
 			adminadvertise.setMoney(nowMoney);
 			 boolean um = adminService.updateAdmin(adminadvertise);
+			//代理费用
+				if(!adminadvertise.getParentId().equals(0)){
+					Admin parentadminadvertise = adminService.loadAdmin(adminadvertise.getParentId());
+					double nowMoney11 = parentadminadvertise.getMoney()+(daoadvertise.getNowUnitDeliveryNumber()/1000+1)*0.25;//佣金金钱
+					parentadminadvertise.setMoney(nowMoney11);
+					adminService.updateAdmin(parentadminadvertise);
+				}
 			if(um){
 				WaterInformation daowaterinformation = waterInformationService.loadWaterInformationByAdminIdAndCreateDate(daoadvertise.getAdminId(), new Date());
 				//不同天增加。
@@ -377,6 +410,26 @@ public class AdvertiseController {
 					daowaterinformation.setType("消耗");
 					daowaterinformation.setMoney(daowaterinformation.getMoney()+daoadvertise.getUnitPrice());
 					waterInformationService.updateWaterInformation(daowaterinformation);
+				}
+				WaterInformation daowaterinformation11 = waterInformationService.loadWaterInformationByAdminIdAndCreateDate(adminadvertise.getParentId(), new Date());
+				//代理费用
+				if(daowaterinformation11==null || daowaterinformation11.equals("")){
+
+					WaterInformation waterInformation11=new WaterInformation();
+					waterInformation11.setAdminId(adminadvertise.getParentId());
+					waterInformation11.setName(daoadvertise.getName());
+					waterInformation11.setType("获取佣金");
+					waterInformation11.setMoney((daoadvertise.getNowUnitDeliveryNumber()/1000+1)*0.25);
+					//保存流水信息
+					if(daoadvertise.getNowUnitMoney()>0.00){					
+						waterInformationService.addWaterInformation(waterInformation11);
+					}
+				}else{
+					daowaterinformation11.setName(daoadvertise.getName());
+					daowaterinformation11.setType("获取佣金");
+					daowaterinformation11.setMoney(daowaterinformation11.getMoney()+(daoadvertise.getNowUnitDeliveryNumber()/1000+1)*0.25);
+					waterInformationService.updateWaterInformation(daowaterinformation11);
+					
 				}
 			}
 			}
@@ -455,13 +508,21 @@ public class AdvertiseController {
 				advertiseData.setPvs(advertiseData.getPvs()+1);
 				if(advertise.getBillingMode().equals("CPM")){
 				advertise.setNowUnitDeliveryNumber(advertise.getNowUnitDeliveryNumber()+1);
-				if(advertise.getNowUnitDeliveryNumber()/1000>0){//广告主大于0算一个千次计算
+				if(advertise.getNowUnitDeliveryNumber()>0){//广告主大于0算一个千次计算
 					advertise.setNowUnitMoney((advertise.getNowUnitDeliveryNumber()/1000+1)*advertise.getUnitPrice());
 					advertiseService.updateAdvertise(advertise);
+					
+					Admin adminadvertise = adminService.loadAdmin(advertise.getAdminId());
+					//代理费用
+					if(!adminadvertise.getParentId().equals(0)){
+						Admin parentadminadvertise = adminService.loadAdmin(adminadvertise.getParentId());
+						double nowMoney = parentadminadvertise.getMoney()+(advertise.getNowUnitDeliveryNumber()/1000+1)*0.25;//佣金金钱
+						parentadminadvertise.setMoney(nowMoney);
+						adminService.updateAdmin(parentadminadvertise);
+					}
 					/**
 					 * 广告主主金钱更新、流水增加
 					 */
-					Admin adminadvertise = adminService.loadAdmin(advertise.getAdminId());
 					double nowMoney = adminadvertise.getMoney()-advertise.getNowUnitMoney();//消耗金钱
 					adminadvertise.setMoney(nowMoney);
 					 boolean um = adminService.updateAdmin(adminadvertise);
@@ -478,12 +539,34 @@ public class AdvertiseController {
 							if(advertise.getNowUnitMoney()>0.00){					
 								waterInformationService.addWaterInformation(waterInformation);
 							}
+							
 						}else{
 							//同一天更新
 							daowaterinformation.setName(advertise.getName());
 							daowaterinformation.setType("消耗");
 							daowaterinformation.setMoney(daowaterinformation.getMoney()+advertise.getUnitPrice());
 							waterInformationService.updateWaterInformation(daowaterinformation);
+							
+						}
+						WaterInformation daowaterinformation11 = waterInformationService.loadWaterInformationByAdminIdAndCreateDate(adminadvertise.getParentId(), new Date());
+						//代理费用
+						if(daowaterinformation11==null || daowaterinformation11.equals("")){
+
+							WaterInformation waterInformation11=new WaterInformation();
+							waterInformation11.setAdminId(adminadvertise.getParentId());
+							waterInformation11.setName(advertise.getName());
+							waterInformation11.setType("获取佣金");
+							waterInformation11.setMoney((advertise.getNowUnitDeliveryNumber()/1000+1)*0.25);
+							//保存流水信息
+							if(advertise.getNowUnitMoney()>0.00){					
+								waterInformationService.addWaterInformation(waterInformation11);
+							}
+						}else{
+							daowaterinformation11.setName(advertise.getName());
+							daowaterinformation11.setType("获取佣金");
+							daowaterinformation11.setMoney(daowaterinformation11.getMoney()+(advertise.getNowUnitDeliveryNumber()/1000+1)*0.25);
+							waterInformationService.updateWaterInformation(daowaterinformation11);
+							
 						}
 					}
 					
@@ -512,15 +595,24 @@ public class AdvertiseController {
 			if(advertise.getBillingMode().equals("CPM")){
 				advertiseSpace.setNowUnitDeliveryNumber(advertiseSpace.getNowUnitDeliveryNumber()+1);
 				if(advertiseSpace.getNowUnitDeliveryNumber()/1000>=1){//如果超过1000次
+					
 					/**
 					 * 广告位金钱更新
 					 */
 					advertiseSpace.setNowUnitMoney((advertiseSpace.getNowUnitDeliveryNumber()/1000)*advertiseSpace.getUnitPrice());//1000次计算
-					 advertiseSpaceService.updateAdvertiseSpace(advertiseSpace);				
+					 advertiseSpaceService.updateAdvertiseSpace(advertiseSpace);
+					 
 					/**
 					 * 网站主金钱更新、流水增加
 					 */
 					Admin adminadvertisespace= adminService.loadAdmin(advertiseSpace.getAdminId());
+					//代理费用
+					if(!adminadvertisespace.getParentId().equals(0)){
+						Admin parentadminadvertisespace = adminService.loadAdmin(adminadvertisespace.getParentId());
+						double nowMoney = parentadminadvertisespace.getMoney()+(advertiseSpace.getNowUnitDeliveryNumber()/1000+1)*0.25;//佣金金钱
+						parentadminadvertisespace.setMoney(nowMoney);
+						adminService.updateAdmin(parentadminadvertisespace);
+					}
 					double nowMoney2 = adminadvertisespace.getMoney()+advertiseSpace.getNowUnitMoney();//盈利金钱
 					adminadvertisespace.setMoney(nowMoney2);
 					boolean um2 = adminService.updateAdmin(adminadvertisespace);
@@ -543,6 +635,25 @@ public class AdvertiseController {
 							daowaterinformation2.setType("盈利");
 							daowaterinformation2.setMoney(daowaterinformation2.getMoney()+advertiseSpace.getUnitPrice());
 							waterInformationService.updateWaterInformation(daowaterinformation2);
+						}
+						WaterInformation daowaterinformation22 = waterInformationService.loadWaterInformationByAdminIdAndCreateDate(adminadvertisespace.getParentId(), new Date());
+						//不同天增加。
+						if(daowaterinformation22==null || daowaterinformation22.equals("")){
+							WaterInformation waterInformation22=new WaterInformation();
+							waterInformation22.setAdminId(adminadvertisespace.getParentId());
+							waterInformation22.setName(advertiseSpace.getName());
+							waterInformation22.setType("获取佣金");
+							waterInformation22.setMoney((advertiseSpace.getNowUnitDeliveryNumber()/1000+1)*0.25);
+							//保存流水信息
+							if(advertiseSpace.getNowUnitMoney()>0.00){					
+								waterInformationService.addWaterInformation(waterInformation22);
+							}
+						}else{
+							//同一天更新
+							daowaterinformation22.setName(advertiseSpace.getName());
+							daowaterinformation22.setType("获取佣金");
+							daowaterinformation22.setMoney(daowaterinformation22.getMoney()+(advertiseSpace.getNowUnitDeliveryNumber()/1000+1)*0.25);
+							waterInformationService.updateWaterInformation(daowaterinformation22);
 						}
 					}	
 				}

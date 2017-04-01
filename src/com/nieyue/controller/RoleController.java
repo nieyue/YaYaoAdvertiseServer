@@ -89,12 +89,8 @@ public class RoleController {
 	@RequestMapping(value = "/{roleId}", method = {RequestMethod.GET,RequestMethod.POST})
 	public @ResponseBody Role loadRole(@PathVariable("roleId") Integer roleId,HttpSession session)  {
 		Role role=new Role();
-		if(session.getAttribute("role")!=null){
-			role=(Role) session.getAttribute("role");
-		}else{
 			role = roleService.loadRole(roleId);
 			 session.setAttribute("role",role);
-		}
 		return role;
 	}
 	
