@@ -1,7 +1,7 @@
 ;(function(window){
 document.querySelector('html body').style.cssText="margin:0;padding:0;-webkit-overflow-scrolling:touch;overflow:auto;";
-//var urlhost="http://advertiseserver.yayao8.com";
-var urlhost="http://localhost";
+var urlhost="http://advertiseserver.yayao8.com";
+//var urlhost="http://localhost";
 var advertiseSpace=(function(){
 	/**
 	**对象初始化
