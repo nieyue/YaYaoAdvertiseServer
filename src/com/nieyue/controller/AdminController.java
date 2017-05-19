@@ -472,7 +472,6 @@ public class AdminController {
 			request.getSession().setAttribute("admin", admin);
 			Role role = roleService.loadRole(admin.getRoleId());
 			request.getSession().setAttribute("role", role);
-			
 		}
 		return admin;
 	}

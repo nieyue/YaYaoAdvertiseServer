@@ -215,7 +215,7 @@ public class AdvertiseController {
 //				}
 //			}
 			BoundSetOperations<String, String> bso2 = stringRedisTemplate.boundSetOps("advertiseSpaceDataIps"+advertiseSpaceData.getAdvertiseSpaceDataId());
-			if(bso2.getKey()!=null&& !bso2.getKey().equals("")){
+			if(bso2.members()!=null && bso2.members().size()>0){
 					int oldSize = bso2.members().size();
 				 bso2.add(IPCountUtil.getIpAddr(request));
 					int newSize = bso2.members().size();
@@ -354,7 +354,7 @@ public class AdvertiseController {
 //					}
 //				}
 				BoundSetOperations<String, String> bso = stringRedisTemplate.boundSetOps("advertiseDataIps"+advertiseData.getAdvertiseDataId());
-				if(bso.getKey()!=null&& !bso.getKey().equals("")){
+				if(bso.members()!=null && bso.members().size()>0){
 					int oldSize = bso.members().size();
 						bso.add(IPCountUtil.getIpAddr(request));
 					int newSize = bso.members().size();
