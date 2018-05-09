@@ -87,7 +87,7 @@
     <!--扫描sql配置文件，mapper需要的xml文件 -->
  	 <property name="mapperLocations" value="classpath:config/mapper/*.xml"></property>
  </bean>  
-	   <bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate">
+	   <bean id="sqlSession" class="org.mybatis.spring.SqlSessionTemplate" scope="prototype">
 		<constructor-arg index="0" ref="sqlSessionFactory" />
 	 
 		<constructor-arg index="1" value="BATCH" />

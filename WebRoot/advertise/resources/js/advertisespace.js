@@ -431,7 +431,8 @@ function scriptlocation(body,advertise_space_id,nextNode){
   var scripts=document.getElementsByTagName("script");
   for (var i = 0; i < scripts.length; i++) {
     if(advertise_space_id && scripts[i].innerHTML.indexOf('advertise_space_id='+advertise_space_id)>-1){
-    scripts[i].outerHTML=nextNode.outerHTML+scripts[i].outerHTML;
+    //scripts[i].outerHTML=nextNode.outerHTML+scripts[i].outerHTML;
+    scripts[i].outerHTML=nextNode.outerHTML;
     return ; 
     }
   }

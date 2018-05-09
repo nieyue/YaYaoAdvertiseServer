@@ -1,7 +1,10 @@
+/**
+ * 版本0.0.1
+ */
 ;(function(window){
 document.querySelector('html body').style.cssText="margin:0;padding:0;-webkit-overflow-scrolling:touch;overflow:auto;";
 var urlhost="http://advertiseserver.yayao8.com";
-//var urlhost="http://localhost:8080";
+//var urlhost="http://localhost";
 var advertiseSpace=(function(){
 	/**
 	**对象初始化
@@ -31,7 +34,7 @@ var advertiseSpace=(function(){
       {
        	advertise_space_id:window.advertise_space_id||'',//广告位id
        	name:'',//名称
-        platform:'wap',//平台
+        platform:'移动端',//平台
         type:'悬浮',//类型
         business_type:'男性网站',
         billing_mode:'CPC',
@@ -181,6 +184,9 @@ var advertiseSpace=(function(){
     var thisAdvertiseSpaceConfigLength=thisAdvertiseSpaceConfig.length;
            var  oldWidth=this.UI.width;
     for(var i=0;i<thisAdvertiseSpaceConfigLength;i++){      
+      //移动端
+      if(thisAdvertiseSpaceConfig[i].platform=="移动端"){
+
            //位置
            var location;
            this.UI.left=parseInt((100-parseInt(oldWidth.slice(0,-1)))/2)+'%';
@@ -316,6 +322,151 @@ var advertiseSpace=(function(){
              seconda.setAttribute("style","opacity:0.5;position:absolute;top:0;right:1px;border:1px solid #000; background-color:#000;color:white;height:20px;width:20px;line-height:20px;text-align:center;font-size:22px;text-decoration:none;");
              thisDiv.appendChild(seconda);
              }
+    }//移动端 end
+      //PC端
+      else if(thisAdvertiseSpaceConfig[i].platform=="PC端"){
+        //pc端初始化
+        this.UI.width='320px';
+        this.UI.height='300px';
+        this.UI.left='0';
+        this.UI.top='0';
+        this.UI.margin='auto';
+        this.UI.padding='5px';
+        this.UI.display="inline-block";
+         var location;
+          if(thisAdvertiseSpaceConfig[i].type=='内嵌'){
+            this.UI.zindex='9999';
+            this.UI.position='relative';
+            this.UI.height='auto';
+            if(thisAdvertiseSpaceConfig[i].location=='顶部'){
+              location='insertBefore';
+            }
+            if(thisAdvertiseSpaceConfig[i].location=='底部'){
+              location='appendChild';
+            }
+          }
+
+            if(thisAdvertiseSpaceConfig[i].type=='悬浮'){
+            this.UI.position='fixed';
+               this.UI.zindex='10002';
+               this.UI.left='100%';
+               this.UI.width='300px';
+               this.UI.height='300px';
+            if(thisAdvertiseSpaceConfig[i].location=='顶部'){
+              location='insertBefore';
+            }
+            if(thisAdvertiseSpaceConfig[i].location=='底部'){
+              location='appendChild';
+              this.UI.top="100%";
+              this.UI.margin="-"+this.UI.height+" -300px";
+            }       
+          }
+
+            //创建div
+             var thisDiv=document.createElement("div");
+             thisDiv.setAttribute("style","display:"+this.UI.display+";border-bottom:"+this.UI.borderBottom+";background-color:"+this.UI.backgroundColor+";position:"+this.UI.position+";left:"+this.UI.left+";top:"+this.UI.top+";height:"+this.UI.height+";width:"+this.UI.width+";margin:"+this.UI.margin+";z-index:"+this.UI.zindex+";margin-bottom:0px;");
+             thisDiv.setAttribute('id',"ui");
+             
+               
+
+              for(var k=0;k<thisAdvertiseSpaceConfig[i].advertiseList.length;k++){                 
+                if(thisAdvertiseSpaceConfig[i].advertiseList.length<=3){
+                        var width="100%";
+                        var height="100%";
+                        if(thisAdvertiseSpaceConfig[i].advertiseList.length==1){
+                           // width="960px";
+                        	width="100%";
+                            //height="360px";
+                             if(thisAdvertiseSpaceConfig[i].type=='悬浮'){
+                              width="100%";
+                              height=(248-parseInt(this.UI.padding.slice(0,-2))*2)+'px';
+                              //height="225px";
+                             }
+                        }
+                         if(thisAdvertiseSpaceConfig[i].advertiseList.length==2){
+                           //width="480px";
+                           width="50%";
+                           //height="180px";
+                         }
+                          if(thisAdvertiseSpaceConfig[i].advertiseList.length==3){
+                          // width="320px";
+                           width="33.33%";
+                           //height="120px";
+                         }
+                        //有图片
+                      if(thisAdvertiseSpaceConfig[i].advertiseList[k].img && thisAdvertiseSpaceConfig[i].advertiseList[k].img.length>0){
+                   var  firsta=document.createElement("a");
+                          firsta.setAttribute("href",thisAdvertiseSpaceConfig[i].advertiseList[k].link);
+                        firsta.setAttribute("id",'aopen');
+                      firsta.setAttribute("style","padding:"+this.UI.padding+";text-decoration:none !important;box-sizing:border-box;display:inline-block;width:"+width+";height:auto;");
+                       var firstimg=document.createElement("img");
+                       firstimg.setAttribute("style","width:100%;height:"+height+";z-index:"+this.UI.zindex);
+                       firstimg.setAttribute("src",thisAdvertiseSpaceConfig[i].advertiseList[k].img[0]);
+                       firsta.appendChild(firstimg);
+                      
+                      if(thisAdvertiseSpaceConfig[i].advertiseList[k].text){
+                     var firsttext=document.createElement("span");
+                     firsttext.setAttribute("style","height:24px;overflow:hidden;text-overflow: ellipsis;display: -webkit-box;-webkit-line-clamp:2;-webkit-box-orient: vertical; text-align:center;width:100%;height:15%;color:#000;z-index:"+this.UI.zindex+";font-size:"+this.UI.fontSize+";color:"+this.UI.color);
+                     firsttext.innerHTML=thisAdvertiseSpaceConfig[i].advertiseList[k].text;
+                     firsta.appendChild(firsttext);
+                      }
+                      //悬浮没有文字
+                      if(!thisAdvertiseSpaceConfig[i].advertiseList[k].text && thisAdvertiseSpaceConfig[i].type=='悬浮'){
+                        thisDiv.style.height='250px';
+                        thisDiv.style.top='auto';
+                        thisDiv.style.bottom='0px';
+                      }
+
+                     //把a导入div,把div导入body
+                  thisDiv.appendChild(firsta);
+                      }else{
+                        //没图片
+                       var  firstspan=document.createElement("span");
+                      firstspan.setAttribute("style","vertical-align:top;line-height:30px;padding:"+this.UI.padding+";box-sizing:border-box;display:inline-block;width:"+width+";height:"+this.UI.height+";");
+                        if(thisAdvertiseSpaceConfig[i].advertiseList[k].length>5||thisAdvertiseSpaceConfig[i].advertiseList[k].length<1){
+                          throw new Error("文字链数目1~5！");
+                        }
+                        for(var y=0;y<thisAdvertiseSpaceConfig[i].advertiseList[k].length;y++){  
+                       var firsta=document.createElement("a");
+                     firsta.setAttribute("style","overflow:hidden;text-overflow: ellipsis;display: -webkit-box;-webkit-line-clamp:1;-webkit-box-orient: vertical; text-decoration:none;width:100%;z-index:"+this.UI.zindex+";font-size:"+this.UI.fontSize+";color:"+this.UI.color);
+                     firsta.innerHTML=thisAdvertiseSpaceConfig[i].advertiseList[k][y].text;
+                     firsta.setAttribute("href",thisAdvertiseSpaceConfig[i].advertiseList[k][y].link);
+                     firsta.setAttribute("id",'aopen');
+                     firstspan.appendChild(firsta);
+                   }
+                     //把a导入div,把div导入body
+                      thisDiv.appendChild(firstspan);
+                      }
+
+                        }
+                    else{
+                    throw new Error("图片数目1~3！");
+                         }
+
+                 
+               }
+ 
+             
+             var bodyNode=document.getElementsByTagName("body")[0];
+             //bodyNode.appendChild(thisDiv);
+             //动态添加
+             if(thisAdvertiseSpaceConfig[i].type=='内嵌'){
+                 scriptlocation(bodyNode,advertise_space_id,thisDiv);
+                 }else{
+                 //动态添加
+                   bodyNode[location](thisDiv,bodyNode.childNodes[0]);
+                 }
+             //创建第二个a 
+            if(thisAdvertiseSpaceConfig[i].close){
+             var seconda=document.createElement("a");
+             seconda.innerHTML="×";
+             seconda.setAttribute("href",'javascript:;');
+             seconda.setAttribute("id",'aclose');
+             seconda.setAttribute("style","opacity:0.5;position:absolute;top:-22px;right:1px;border:1px solid #000; background-color:#000;color:white;height:20px;width:20px;line-height:20px;text-align:center;font-size:22px;text-decoration:none;");
+             thisDiv.appendChild(seconda);
+            }
+
+      }//PC端 end
       } 
 
              //监听第二个a的事件，删除整个div

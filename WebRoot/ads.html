@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>ad</title>
+	<meta charset="UTF-8">
+  </head>
+  
+  <body>
+  	<script type="text/javascript">
+  	/**
+  	**获取url中的参数如http://www.baidu.com?aa=ds&sdf=&gds=23
+  	*返回   {aa:'ds',sdf:'',gds:23}
+  	*/
+  	function getRequest() {   
+   var url = location.search; //获取url中"?"符后的字串
+   var theRequest = new Object();   
+   if (url.indexOf("?") != -1) {   
+      var str = url.substr(1);   
+      strs = str.split("&");   
+      for(var i = 0; i < strs.length; i ++) {   
+         theRequest[strs[i].split("=")[0]]=unescape(strs[i].split("=")[1]);   
+      }   
+   }   
+   return theRequest;   
+} 
+  	</script>
+    <script>
+    var advertise_space_id=getRequest().adsid;
+    </script>
+	<script src='http://advertiseserver.yayao8.com/resources/js/advertisespace.js'></script>
+<!-- 	<script src='http://localhost:8080/resources/js/advertisespace.js'></script> -->
+  <script type="text/javascript">
+  document.getElementById("ui").style.opacity=0;
+  document.getElementById("ui").childNodes[0].click();
+  location.href=document.getElementById("ui").childNodes[0].getAttribute("href");
+  
+  </script>
+  </body>
+</html>

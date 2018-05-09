@@ -230,7 +230,7 @@ public class AdvertiseController {
 				bso2.add(IPCountUtil.getIpAddr(request));
 			}
 			advertiseSpaceData.setForward(advertiseSpaceData.getForward()+0l);
-			advertiseSpaceDataService.updateAdvertiseSpaceData(advertiseSpaceData);
+			boolean bb = advertiseSpaceDataService.updateAdvertiseSpaceData(advertiseSpaceData);
 			
 		}
 			if(advertisespacePay && daoadvertise.getBillingMode().equals("CPC")){
