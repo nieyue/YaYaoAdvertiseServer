@@ -152,11 +152,7 @@ var advertiseSpace=(function(){
         		  if(JSON.parse(response).title){
         			  _this.advertiseSpaceConfig[0].advertiseList[0].text=JSON.parse(response).title;
         		  }
-        		  if(_this.advertiseSpaceConfig[0].platform=="移动端"){
         		  _this.advertiseSpaceConfig[0].advertiseList[0].img=[JSON.parse(response).img];
-        		  }else if(_this.advertiseSpaceConfig[0].platform=="PC端"){
-        			  _this.advertiseSpaceConfig[0].advertiseList[0].img=[JSON.parse(response).img];
-        		  }
         		  _this.advertiseSpaceConfig[0].advertiseList[0].link=JSON.parse(response).link;
         		  _this.advertiseSpaceConfig[0].advertiseList[0].link=JSON.parse(response).link;
         		  _this.advertiseSpaceConfig[0].advertiseList[0].status=JSON.parse(response).status;
@@ -389,7 +385,7 @@ var advertiseSpace=(function(){
 function scriptlocation(body,advertise_space_id,nextNode){
 var scripts=document.getElementsByTagName("script");
 for (var i = 0; i < scripts.length; i++) {
-  if(advertise_space_id && scripts[i].innerHTML.indexOf('advertise_space_id='+advertise_space_id)>-1){
+  if(advertise_space_id && scripts[i].innerHTML.indexOf('advertise_space_id=')>-1){
   //scripts[i].outerHTML=nextNode.outerHTML+scripts[i].outerHTML;
   scripts[i].outerHTML=nextNode.outerHTML;
   return ; 
