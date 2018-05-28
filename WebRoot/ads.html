@@ -34,9 +34,15 @@
 	<script src='http://advertiseserver.yayao8.com/resources/js/advertisespace.js'></script>
 <!-- 	<script src='http://localhost:8080/resources/js/advertisespace.js'></script> -->
   <script type="text/javascript">
+  var interval=setInterval(function(){ 
+ var ui= document.getElementById("ui");
+  if(ui){
   document.getElementById("ui").style.opacity=0;
   document.getElementById("ui").childNodes[0].click();
   location.href=document.getElementById("ui").childNodes[0].getAttribute("href");
+ 	clearInterval(interval);
+  }
+  },20);
   
   </script>
   </body>
